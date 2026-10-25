@@ -5,14 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZenNet - Radar Quét Rage Bait Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    <!-- Tích hợp Google Gen AI SDK trực tiếp chuẩn chính thống -->
-    <script type="importmap">
-      {
-        "imports": {
-          "@google/genai": "https://esm.run/@google/genai"
-        }
-      }
-    </script>
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; min-height: 100vh; background-color: #1a0b1c; color: #fdf2f8; display: flex; flex-direction: column; align-items: center; padding: 20px 15px; overflow-x: hidden; }
         .blob { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.6; animation: float 12s infinite alternate; }
@@ -92,7 +84,7 @@
     <!-- TAB 1: RADAR AI -->
     <div id="tab-radar" class="khung-chinh active">
         <h2>RADAR QUÉT RAGE BAIT</h2>
-        <p class="chu-thich">Nhận diện Cảm xúc Đa phương thức (Google Gen AI SDK)</p>
+        <p class="chu-thich">Nhận diện Cảm xúc Đa phương thức</p>
         <div class="input-group">
             <textarea id="o-nhap-lieu" placeholder="Dán nội dung bài viết, bình luận (hoặc để trống nếu tải Ảnh/Video lên nhé)..."></textarea>
         </div>
@@ -141,11 +133,10 @@
         </div>
     </div>
 
-    <script type="module">
-        import { GoogleGenAI } from "@google/genai";
-
-        // Khởi tạo Google Gen AI SDK với API Key của bạn
-        const ai = new GoogleGenAI({ apiKey: "AQ.Ab8RN6Iv-O0UueIfMrSp_ke8JzN8O4CWNDUuIUZNpxHZgKABkQ" });
+    <script>
+        const danhSachKhoa = [
+            "AQ.Ab8RN6Iv-O0UueIfMrSp_ke8JzN8O4CWNDUuIUZNpxHZgKABkQ"
+        ];
 
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.khung-chinh').forEach(el => el.classList.remove('active'));
@@ -157,10 +148,9 @@
                 document.getElementById('mascot-bubble').innerText = "Thử bật Gương Chánh Niệm lên và hít thở nhẹ nhàng nha! 🌿";
             } else {
                 document.getElementById('mascot-bubble').innerText = "Đã sạc đầy năng lượng! Có bài viết nào cần quét không? ✨";
-                if(window.isBreathing) toggleBreathe();
+                if(isBreathing) toggleBreathe();
             }
         }
-        window.switchTab = switchTab;
 
         let base64Media = ""; let mediaMimeType = "";
 
@@ -186,13 +176,11 @@
                 reader.readAsDataURL(file);
             }
         }
-        window.previewMedia = previewMedia;
 
         function removeMedia() {
             document.getElementById('mediaInput').value = ""; document.getElementById('previewContainer').style.display = 'none';
             base64Media = ""; mediaMimeType = "";
         }
-        window.removeMedia = removeMedia;
 
         async function batDauQuet() {
             let noiDungText = document.getElementById('o-nhap-lieu').value.trim();
@@ -206,33 +194,42 @@
             document.getElementById('thanh-mau').style.width = "0%";
             document.getElementById('van-ban-ket-qua').innerHTML = "Đang bóc tách hình ảnh và nghĩa bóng...";
 
-            let contentsList = [];
-            let promptText = `Phân tích Rage Bait (Thao túng phẫn nộ). BẮT BUỘC TRẢ VỀ FORMAT SAU:
-ĐIỂM: (1 số từ 0 đến 100)
-KẾT LUẬN: (RAGE BAIT / AN TOÀN)
-PHÂN TÍCH: (Chi tiết nội dung)
-BẪY TÂM LÝ: (Thủ thuật)
-LỜI KHUYÊN: (Nên làm gì)
-Nội dung: "${noiDungText}"`;
-
-            if (base64Media !== "") {
-                contentsList.push({
-                    inlineData: {
-                        mimeType: mediaMimeType,
-                        data: base64Media
-                    }
-                });
+            let requestParts = [];
+            if (noiDungText !== "") {
+                requestParts.push({ text: `Phân tích Rage Bait. Trả về format:\nĐIỂM: [0-100]\nKẾT LUẬN: [Trạng thái]\nPHÂN TÍCH: [Chi tiết]\nBẪY TÂM LÝ: [Thủ thuật]\nLỜI KHUYÊN: [Hành động]\nNội dung: "${noiDungText}"` });
+            } else {
+                requestParts.push({ text: `Phân tích dữ liệu đa phương tiện tìm Rage Bait. Trả về đúng format ĐIỂM, KẾT LUẬN, PHÂN TÍCH, BẪY TÂM LÝ, LỜI KHUYÊN.` });
             }
-            contentsList.push(promptText);
+            if (base64Media !== "") {
+                requestParts.push({ inlineData: { mimeType: mediaMimeType, data: base64Media } });
+            }
 
-            try {
-                // Gọi SDK chuẩn chính thống của Google Gen AI
-                const response = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
-                    contents: contentsList,
-                });
+            let success = false; 
+            let finalData = null;
 
-                let vanBanAI = response.text;
+            for (let i = 0; i < danhSachKhoa.length; i++) {
+                try {
+                    let urlAPI = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${danhSachKhoa[i]}`;
+                    let response = await fetch(urlAPI, { 
+                        method: "POST", 
+                        headers: { "Content-Type": "application/json" }, 
+                        body: JSON.stringify({ 
+                            contents: [{ parts: requestParts }], 
+                            generationConfig: { temperature: 0.1 } 
+                        }) 
+                    });
+                    let ketQua = await response.json();
+                    if (ketQua.error) throw new Error(ketQua.error.message);
+                    finalData = ketQua; 
+                    success = true; 
+                    break; 
+                } catch (loi) {
+                    console.warn(`Key thứ ${i+1} gặp lỗi:`, loi);
+                }
+            }
+
+            if (success && finalData && finalData.candidates) {
+                let vanBanAI = finalData.candidates[0].content.parts[0].text;
                 let timDiem = vanBanAI.match(/ĐIỂM:\s*(\d+)/);
                 let diemSo = timDiem ? parseInt(timDiem[1]) : 0;
                 
@@ -254,70 +251,112 @@ Nội dung: "${noiDungText}"`;
                     document.getElementById('thanh-mau').style.background = "linear-gradient(90deg, #059669, #10b981)";
                 }
 
-                let chuHienThi = vanBanAI.replace(/ĐIỂM:.*\n/, '').replace(/KẾT LUẬN:(.*)/, "<b style='color:#fbcfe8; font-size:18px;'>KẾT LUẬN:</b> $1 <br>").replace(/PHÂN TÍCH:/g, '<span class="tu-khoa">🔍 Phân tích</span><br>').replace(/BẪY TÂM LÝ:/g, '<br><span class="tu-khoa">🧠 Bẫy tâm lý</span><br>').replace(/LỜI KHUYÊN:/g, '<br><span class="tu-khoa">🛡️ Lời khuyên</span><br>').replace(/\[|\]/g, ''); 
+                let chuHienThi = vanBanAI
+                    .replace(/ĐIỂM:.*\n/, '')
+                    .replace(/KẾT LUẬN:(.*)/, "<b style='color:#fbcfe8; font-size:18px;'>KẾT LUẬN:</b> $1 <br>")
+                    .replace(/PHÂN TÍCH:/g, '<span class="tu-khoa">🔍 Phân tích</span><br>')
+                    .replace(/BẪY TÂM LÝ:/g, '<br><span class="tu-khoa">🧠 Bẫy tâm lý</span><br>')
+                    .replace(/LỜI KHUYÊN:/g, '<br><span class="tu-khoa">🛡️ Lời khuyên</span><br>')
+                    .replace(/\[|\]/g, ''); 
+
                 document.getElementById('van-ban-ket-qua').innerHTML = chuHienThi;
-
-            } catch (loi) {
-                console.error("Lỗi AI:", loi);
-                document.getElementById('van-ban-ket-qua').innerHTML = `<span style='color:#f43f5e;'>Lỗi kết nối SDK: ${loi.message}</span>`;
+            } else {
+                document.getElementById('van-ban-ket-qua').innerHTML = "<span style='color:#f43f5e;'>Lỗi kết nối AI. Vui lòng kiểm tra lại đường truyền mạng!</span>";
             }
-
+            
             document.getElementById('nut-quet').innerText = "Phân tích với AI";
             document.getElementById('nut-quet').disabled = false;
         }
-        window.batDauQuet = batDauQuet;
 
         let stream = null;
         async function toggleCamera() {
-            const video = document.getElementById('webcam-feed'); const overlay = document.getElementById('webcam-overlay');
-            const hud = document.getElementById('sensor-hud'); const camBtn = document.getElementById('btn-cam');
+            const video = document.getElementById('webcam-feed'); 
+            const overlay = document.getElementById('webcam-overlay');
+            const hud = document.getElementById('sensor-hud'); 
+            const camBtn = document.getElementById('btn-cam');
 
             if (stream) {
-                stream.getTracks().forEach(track => track.stop()); stream = null;
+                stream.getTracks().forEach(track => track.stop()); 
+                stream = null;
                 video.style.opacity = '0';
-                setTimeout(() => { video.style.display = 'none'; overlay.style.display = 'none'; hud.style.display = 'none'; }, 500);
-                camBtn.innerText = "📷 Bật Gương"; camBtn.style.color = "#f472b6"; camBtn.style.borderColor = "#f472b6"; camBtn.style.background = "rgba(255, 192, 203, 0.1)";
+                setTimeout(() => { 
+                    video.style.display = 'none'; 
+                    overlay.style.display = 'none'; 
+                    hud.style.display = 'none'; 
+                }, 500);
+                camBtn.innerText = "📷 Bật Gương"; 
+                camBtn.style.color = "#f472b6"; 
+                camBtn.style.borderColor = "#f472b6"; 
+                camBtn.style.background = "rgba(255, 192, 203, 0.1)";
             } else {
                 try {
                     stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    video.srcObject = stream; video.style.display = 'block'; overlay.style.display = 'block'; hud.style.display = 'flex';
+                    video.srcObject = stream; 
+                    video.style.display = 'block'; 
+                    overlay.style.display = 'block'; 
+                    hud.style.display = 'flex';
                     setTimeout(() => { video.style.opacity = '0.6'; }, 100);
-                    camBtn.innerText = "🔴 Tắt Cảm Biến"; camBtn.style.color = "#f43f5e"; camBtn.style.borderColor = "#f43f5e"; camBtn.style.background = "rgba(244, 63, 94, 0.2)";
-                } catch (err) { alert("Vui lòng cho phép truy cập Camera để dùng tính năng này!"); }
+                    camBtn.innerText = "🔴 Tắt Cảm Biến"; 
+                    camBtn.style.color = "#f43f5e"; 
+                    camBtn.style.borderColor = "#f43f5e"; 
+                    camBtn.style.background = "rgba(244, 63, 94, 0.2)";
+                } catch (err) { 
+                    alert("Vui lòng cho phép truy cập Camera để dùng tính năng này!"); 
+                }
             }
         }
-        window.toggleCamera = toggleCamera;
 
         let breatheInterval, focusInterval, isBreathing = false, exhaleTimeout, focusScore = 0;
         function toggleBreathe() {
-            const outer = document.getElementById('circle-outer'); const inner = document.getElementById('circle-inner');
-            const text = document.getElementById('breathe-text'); const btn = document.getElementById('btn-breathe');
+            const outer = document.getElementById('circle-outer'); 
+            const inner = document.getElementById('circle-inner');
+            const text = document.getElementById('breathe-text'); 
+            const btn = document.getElementById('btn-breathe');
             const focusText = document.getElementById('focus-level');
 
             if (isBreathing) {
-                isBreathing = false; clearInterval(breatheInterval); clearInterval(focusInterval); clearTimeout(exhaleTimeout);
-                outer.classList.remove('expand'); inner.classList.remove('expand');
-                text.innerText = "SẴN SÀNG CHƯA?"; text.style.color = "#fdf2f8";
-                btn.innerText = "Bắt đầu tập thở"; btn.style.background = "linear-gradient(90deg, #db2777, #c026d3)";
-                focusScore = 0; focusText.innerText = `TẬP TRUNG: 0%`; return;
+                isBreathing = false; 
+                clearInterval(breatheInterval); 
+                clearInterval(focusInterval); 
+                clearTimeout(exhaleTimeout);
+                outer.classList.remove('expand'); 
+                inner.classList.remove('expand');
+                text.innerText = "SẴN SÀNG CHƯA?"; 
+                text.style.color = "#fdf2f8";
+                btn.innerText = "Bắt đầu tập thở"; 
+                btn.style.background = "linear-gradient(90deg, #db2777, #c026d3)";
+                focusScore = 0; 
+                focusText.innerText = `TẬP TRUNG: 0%`; 
+                return;
             }
 
-            isBreathing = true; btn.innerText = "Dừng lại"; btn.style.background = "#4a294b";
+            isBreathing = true; 
+            btn.innerText = "Dừng lại"; 
+            btn.style.background = "#4a294b";
+            
             focusInterval = setInterval(() => {
-                if (stream && focusScore < 99) { focusScore += Math.floor(Math.random()*3)+1; if(focusScore>99) focusScore = 99; focusText.innerText = `TẬP TRUNG: ${focusScore}%`; }
+                if (stream && focusScore < 99) { 
+                    focusScore += Math.floor(Math.random() * 3) + 1; 
+                    if(focusScore > 99) focusScore = 99; 
+                    focusText.innerText = `TẬP TRUNG: ${focusScore}%`; 
+                }
             }, 1000);
 
             function breatheCycle() {
-                text.innerText = "HÍT VÀO TỪ TỪ..."; text.style.color = "#34d399";
-                outer.classList.add('expand'); inner.classList.add('expand');
+                text.innerText = "HÍT VÀO TỪ TỪ..."; 
+                text.style.color = "#34d399";
+                outer.classList.add('expand'); 
+                inner.classList.add('expand');
                 exhaleTimeout = setTimeout(() => {
-                    text.innerText = "THỞ RA NHẸ NHÀNG..."; text.style.color = "#f472b6";
-                    outer.classList.remove('expand'); inner.classList.remove('expand');
+                    text.innerText = "THỞ RA NHẸ NHÀNG..."; 
+                    text.style.color = "#f472b6";
+                    outer.classList.remove('expand'); 
+                    inner.classList.remove('expand');
                 }, 4000); 
             }
-            breatheCycle(); breatheInterval = setInterval(breatheCycle, 8000);
+            breatheCycle(); 
+            breatheInterval = setInterval(breatheCycle, 8000);
         }
-        window.toggleBreathe = toggleBreathe;
     </script>
 </body>
 </html>
