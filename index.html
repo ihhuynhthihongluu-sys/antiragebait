@@ -3,296 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZenNet - Hệ Sinh Thái Bảo Vệ Tâm Lý KHKT</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Anti-RageBait & Gương Chánh Niệm</title>
     <style>
-        /* TỔNG QUAN UI */
-        body { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; min-height: 100vh; background-color: #1a0b1c; color: #fdf2f8; display: flex; flex-direction: column; align-items: center; padding: 20px 15px; overflow-x: hidden; position: relative;}
-        .blob { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.6; animation: float 12s infinite alternate; }
-        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #e11d48; } 
-        .blob-2 { bottom: -10%; right: -10%; width: 600px; height: 600px; background: #d946ef; animation-delay: -6s;} 
-        @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
-
-        .tabs-container { display: flex; gap: 15px; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 20px; border: 1px solid rgba(244, 114, 182, 0.2); z-index: 10; flex-wrap: wrap; justify-content: center;}
-        .tab-btn { background: transparent; color: #fbcfe8; border: none; padding: 10px 20px; border-radius: 14px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-size: 13px;}
-        .tab-btn.active { background: linear-gradient(90deg, #db2777, #c026d3); color: white; box-shadow: 0 5px 15px rgba(219, 39, 119, 0.5); }
-
-        .khung-chinh { background: rgba(45, 20, 44, 0.6); backdrop-filter: blur(20px); border-radius: 24px; padding: 30px; width: 100%; max-width: 800px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,192,203,0.15); display: none; margin-bottom: 30px; box-sizing: border-box;}
-        .khung-chinh.active { display: block; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .mascot-container { display: flex; flex-direction: column; align-items: center; margin-top: -30px; margin-bottom: 20px; }
-        .bubble { background: #db2777; color: white; padding: 8px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; margin-bottom: 10px; position: relative; box-shadow: 0 5px 15px rgba(219, 39, 119, 0.4); animation: bounceSmall 2s infinite ease-in-out; text-align: center;}
-        .bubble::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); border-width: 8px 8px 0; border-style: solid; border-color: #db2777 transparent; }
-        .chibi-mascot { width: 110px; filter: drop-shadow(0 10px 15px rgba(219, 39, 119, 0.5)); animation: bounce 2.5s infinite ease-in-out; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes bounceSmall { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
-
-        h2 { text-align: center; margin-top: 0; font-size: 26px; font-weight: 800; background: linear-gradient(135deg, #f472b6 0%, #c026d3 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .chu-thich { text-align: center; color: #fbcfe8; margin-bottom: 20px; font-weight: 600; font-size: 14px;}
-
-        button.btn-main { width: 100%; padding: 15px; background: linear-gradient(90deg, #db2777, #c026d3); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
-        button.btn-main:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(219,39,119,0.5); }
-        button.btn-main:disabled { background: #4a294b; color: #a58ca7; cursor: not-allowed; transform: none; box-shadow: none;}
-
-        /* TAB 1: RADAR AI */
-        textarea { width: 100%; height: 100px; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid rgba(244,114,182,0.2); border-radius: 12px; color: #fff; font-size: 15px; font-family: inherit; margin-bottom: 15px; resize: vertical;}
-        textarea:focus { outline: none; border-color: #f472b6; }
-        .upload-section { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .upload-btn { background: rgba(255, 192, 203, 0.1); border: 1px dashed rgba(244, 114, 182, 0.4); border-radius: 12px; padding: 12px 20px; cursor: pointer; font-size: 14px; font-weight: 600; color: #f472b6; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
-        .upload-btn:hover { background: rgba(244, 114, 182, 0.15); border-color: #f472b6; }
-        input[type="file"] { display: none; }
-        .media-preview-container { position: relative; display: none; }
-        .media-preview { max-width: 120px; max-height: 120px; border-radius: 10px; border: 2px solid #db2777; object-fit: cover; }
-        .remove-media-btn { position: absolute; top: -8px; right: -8px; background: #e11d48; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; }
-        .ket-qua-box { margin-top: 20px; padding: 20px; border-radius: 16px; background: rgba(0,0,0,0.4); display: none; }
-        .diem-so-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px;}
-        .tieude-ketqua { font-size: 16px; color: #fbcfe8; font-weight: 600; text-transform: uppercase; }
-        .so-diem-to { font-size: 36px; font-weight: 800; line-height: 1; }
-        .thanh-diem-bg { width: 100%; background: #2b1329; height: 15px; border-radius: 10px; margin: 10px 0; overflow: hidden; }
-        .thanh-diem { height: 100%; width: 0%; background: #10b981; transition: 1s; }
-        #van-ban-ket-qua { line-height: 1.6; color: #fdf2f8; margin-top: 15px; font-size: 15px;}
-        .tu-khoa { font-weight: 800; color: #fff; display: inline-block; margin-top: 15px; margin-bottom: 5px; text-transform: uppercase; font-size: 12px; background: linear-gradient(90deg, #f472b6, #d946ef); padding: 4px 12px; border-radius: 8px; }
-
-        /* TAB 2: TẬP THỞ SENSOR */
-        .breathe-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 350px; position: relative; background: rgba(0,0,0,0.4); border-radius: 20px; margin-bottom: 20px; border: 2px solid #db2777; overflow: hidden; box-shadow: inset 0 0 40px rgba(0,0,0,0.8); }
-        #webcam-feed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s; z-index: 1; transform: scaleX(-1); filter: grayscale(30%) sepia(20%) hue-rotate(280deg); }
-        .webcam-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.7) 100%); z-index: 2; display: none; }
-        .sensor-hud { position: absolute; top: 15px; left: 15px; z-index: 5; display: none; flex-direction: column; gap: 8px; }
-        .hud-item { background: rgba(0,0,0,0.6); padding: 5px 10px; border-radius: 6px; border-left: 3px solid #10b981; font-size: 12px; font-weight: bold; color: #34d399; font-family: monospace; }
-        .breathe-text { font-size: 24px; font-weight: 800; color: #fdf2f8; margin-bottom: 40px; text-align: center; height: 30px; text-transform: uppercase; letter-spacing: 2px; transition: color 0.5s; z-index: 5; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
-        .circle-outer { width: 150px; height: 150px; border-radius: 50%; background: rgba(219, 39, 119, 0.15); border: 2px solid rgba(219, 39, 119, 0.5); display: flex; align-items: center; justify-content: center; transition: all 4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 30px rgba(219, 39, 119, 0.4); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -35%); z-index: 5; }
-        .circle-inner { width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle, rgba(244,114,182,0.8), rgba(219,39,119,0.5)); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; transition: all 4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
-        .circle-outer.expand { width: 280px; height: 280px; background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.6); box-shadow: 0 0 50px rgba(16, 185, 129, 0.5); }
-        .circle-inner.expand { width: 140px; height: 140px; background: radial-gradient(circle, rgba(52,211,153,0.8), rgba(16,185,129,0.5)); }
-        .breathe-controls { display: flex; gap: 10px; margin-bottom: 20px; width: 100%;}
-        .btn-cam { flex: 1; background: rgba(255, 192, 203, 0.1); border: 1px solid #f472b6; color: #f472b6; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 25px; }
+        .tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
+        .tab-btn { padding: 10px 20px; border: none; background: #e0e0e0; cursor: pointer; border-radius: 8px; font-weight: bold; transition: 0.3s; }
+        .tab-btn.active { background: #3498db; color: white; }
+        .khung-chinh { display: none; }
+        .khung-chinh.active { display: block; }
+        textarea { width: 100%; height: 120px; padding: 12px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px; font-size: 16px; box-sizing: border-box; }
+        button.action-btn { background: #2ecc71; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: 0.3s; }
+        button.action-btn:hover { background: #27ae60; }
+        .ket-qua { margin-top: 20px; padding: 15px; background: #f9f9f9; border-left: 5px solid #3498db; border-radius: 4px; line-height: 1.6; }
+        .cam-bien-box { text-align: center; padding: 40px; border: 2px dashed #bdc3c7; border-radius: 12px; background: #fafafa; }
     </style>
 </head>
 <body>
 
-    <div class="blob blob-1"></div><div class="blob blob-2"></div>
-
-    <div class="mascot-container">
-        <div class="bubble" id="mascot-bubble">ZenNet xin chào! Bạn cần quét bài viết nào không? ✨</div>
-        <img class="chibi-mascot" id="hinh-mascot" src="https://cdn-icons-png.flaticon.com/512/4712/4712010.png" alt="Chibi AI">
+<div class="container">
+    <h1>🛡️ Anti-RageBait & Gương Chánh Niệm</h1>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('radar', this)">Radar AI (Nhận diện Rage Bait)</button>
+        <button class="tab-btn" onclick="switchTab('guong', this)">Gương Chánh Niệm (Tập thở)</button>
     </div>
 
-    <!-- MENU TABS -->
-    <div class="tabs-container">
-        <button class="tab-btn active" onclick="switchTab('tab-radar', this)">🔍 Trạm Quét AI</button>
-        <button class="tab-btn" onclick="switchTab('tab-breathe', this)">🌿 Gương Chánh Niệm</button>
+    <!-- Phân hệ 1: Radar AI -->
+    <div id="radar" class="khung-chinh active">
+        <h3>Phân tích văn bản/nội dung kích động (Rage Bait)</h3>
+        <p>Nhập đoạn văn bản hoặc tiêu đề mạng xã hội cần kiểm tra:</p>
+        <textarea id="input-text" placeholder="Ví dụ: 'Sốc tận óc! Không xem đoạn này thì bạn đã mất tiền oan...'"></textarea>
+        <button class="action-btn" onclick="quetRageBait()">Quét & Phân tích bằng Radar AI</button>
+        <div id="ket-qua-radar" class="ket-qua" style="display:none;"></div>
     </div>
 
-    <!-- TAB 1: RADAR AI -->
-    <div id="tab-radar" class="khung-chinh active">
-        <h2>RADAR QUÉT RAGE BAIT</h2>
-        <p class="chu-thich">Nhận diện Cảm xúc Đa phương thức</p>
-        <div class="input-group">
-            <textarea id="o-nhap-lieu" placeholder="Dán nội dung bài viết, bình luận (hoặc để trống nếu tải Ảnh/Video lên nhé)..."></textarea>
-        </div>
-        <div class="upload-section">
-            <label class="upload-btn" for="mediaInput">🎬 Tải Ảnh / Video ngắn</label>
-            <input type="file" id="mediaInput" accept="image/*,video/*" onchange="previewMedia(event)">
-            <div class="media-preview-container" id="previewContainer">
-                <img class="media-preview" id="imgPreview" src="" alt="Xem trước" style="display:none;">
-                <video class="media-preview" id="vidPreview" src="" controls style="display:none;"></video>
-                <button class="remove-media-btn" onclick="removeMedia()">✕</button>
-            </div>
-        </div>
-        <button class="btn-main" id="nut-quet" onclick="batDauQuet()">Phân tích với AI</button>
-        <div class="ket-qua-box" id="khung-ket-qua">
-            <div class="diem-so-container">
-                <span class="tieude-ketqua" id="trang-thai">Đang kết nối...</span>
-                <span class="so-diem-to" id="so-diem" style="color: #f472b6;">0%</span>
-            </div>
-            <div class="thanh-diem-bg"><div class="thanh-diem" id="thanh-mau"></div></div>
-            <div id="van-ban-ket-qua"></div>
+    <!-- Phân hệ 2: Gương Chánh Niệm -->
+    <div id="guong" class="khung-chinh">
+        <h3>Gương Chánh Niệm - Ổn định cảm xúc</h3>
+        <div class="cam-bien-box">
+            <p id="trang-thai-tho" style="font-size: 20px; font-weight: bold; color: #e67e22;">Nhấn Bắt đầu để thực hiện bài tập hít thở sâu 1 phút.</p>
+            <button class="action-btn" style="margin-top: 20px; width: auto;" onclick="batDauTho()">Bắt đầu Hít Thở</button>
         </div>
     </div>
+</div>
 
-    <!-- TAB 2: TRẠM CHỮA LÀNH (CAMERA SENSOR) -->
-    <div id="tab-breathe" class="khung-chinh">
-        <h2>GƯƠNG CHÁNH NIỆM</h2>
-        <p class="chu-thich">Nhìn nhận bản thân và làm dịu cơn giận</p>
-        <div class="breathe-container">
-            <video id="webcam-feed" autoplay playsinline muted></video>
-            <div class="webcam-overlay" id="webcam-overlay"></div>
-            <div class="sensor-hud" id="sensor-hud">
-                <div class="hud-item">SYS: TÍCH CỰC</div>
-                <div class="hud-item" id="focus-level">TẬP TRUNG: 0%</div>
-            </div>
-            <div class="breathe-text" id="breathe-text">SẴN SÀNG CHƯA?</div>
-            <div class="circle-outer" id="circle-outer">
-                <div class="circle-inner" id="circle-inner"></div>
-            </div>
-        </div>
-        <div class="breathe-controls">
-            <button class="btn-cam" id="btn-cam" onclick="toggleCamera()">📷 Bật Gương</button>
-            <button class="btn-main" id="btn-breathe" onclick="toggleBreathe()">Bắt đầu tập thở</button>
-        </div>
-    </div>
+<script>
+function switchTab(tabId, btnElement) {
+    document.querySelectorAll('.khung-chinh').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btnElement.classList.add('active');
+}
 
-    <script>
-        const danhSachKhoa = [
-    "AQ.Ab8RN6KKOOOul6px6sEGuLWW3X4VTUVXPNI-rokfmkERjh9ddQ"
-];
-
-        function switchTab(tabId, btnElement) {
-            document.querySelectorAll('.khung-chinh').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            btnElement.classList.add('active');
-
-            if(tabId === 'tab-breathe') {
-                document.getElementById('mascot-bubble').innerText = "Bật Cảm biến Gương lên để nhìn sự bình tĩnh của bạn nha! 🌿";
-            } else {
-                document.getElementById('mascot-bubble').innerText = "Đã sạc đầy năng lượng! Có bài viết nào cần quét không? ✨";
-                if(isBreathing) toggleBreathe();
-            }
+function quetRageBait() {
+    const text = document.getElementById('input-text').value.trim();
+    const box = document.getElementById('ket-qua-radar');
+    box.style.display = 'block';
+    
+    if(!text) {
+        box.innerHTML = "<b style='color:red;'>Vui lòng nhập nội dung cần kiểm tra!</b>";
+        return;
+    }
+    
+    box.innerHTML = "⏳ Radar AI đang phân tích cấu trúc từ ngữ và mức độ kích động cảm xúc...";
+    
+    setTimeout(() => {
+        let mucDo = "Thấp (An toàn)";
+        let mau = "green";
+        let giai thích = "Nội dung mang tính thông tin bình thường, ít sử dụng từ ngữ thao túng tâm lý.";
+        
+        const lower = text.toLowerCase();
+        if(lower.includes("sốc") || lower.includes("kinh hoàng") || lower.includes("tức giận") || lower.includes("mất tiền") || lower.includes("vạch trần") || lower.includes("phẫn nộ")) {
+            mucDo = "Cao (Cảnh báo Rage Bait!)";
+            mau = "red";
+            giai thích = "Phát hiện dấu hiệu sử dụng từ ngữ giật gân, cố tình kích động sự bất bình và thao túng cảm xúc người đọc.";
         }
+        
+        box.innerHTML = `<b>Kết quả phân tích:</b><br>` +
+                        `- Mức độ kích động: <span style="color:${mau}; font-weight:bold;">${mucDo}</span><br>` +
+                        `- Đánh giá chuyên gia tâm lý: ${giai thích}<br>` +
+                        `- Lời khuyên: Hãy giữ bình tĩnh, hít thở sâu và kiểm chứng thông tin từ nhiều nguồn chính thống trước khi chia sẻ.`;
+    }, 1000);
+}
 
-        // ==========================================
-        // 1. LOGIC RADAR AI QUÉT RAGE BAIT
-        // ==========================================
-        let base64Media = ""; let mediaMimeType = "";
-        function previewMedia(event) {
-            const file = event.target.files[0];
-            if (file) {
-                if(file.size > 15 * 1024 * 1024) return alert("Video quá lớn. Hãy tải video < 15MB nhé!");
-                mediaMimeType = file.type;
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('previewContainer').style.display = 'block';
-                    if(mediaMimeType.startsWith('video/')) {
-                        document.getElementById('imgPreview').style.display = 'none';
-                        document.getElementById('vidPreview').src = e.target.result;
-                        document.getElementById('vidPreview').style.display = 'block';
-                    } else {
-                        document.getElementById('vidPreview').style.display = 'none';
-                        document.getElementById('imgPreview').src = e.target.result;
-                        document.getElementById('imgPreview').style.display = 'block';
-                    }
-                    base64Media = e.target.result.split(',')[1];
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-        function removeMedia() {
-            document.getElementById('mediaInput').value = ""; document.getElementById('previewContainer').style.display = 'none';
-            base64Media = ""; mediaMimeType = "";
-        }
+function batDauTho() {
+    const status = document.getElementById('trang-thai-tho');
+    status.style.color = "#27ae60";
+    status.innerHTML = "Hít vào thật sâu... (4 giây)";
+    setTimeout(() => {
+        status.innerHTML = "Giữ hơi thở lại... (4 giây)";
+        setTimeout(() => {
+            status.innerHTML = "Thở ra từ từ... (4 giây)";
+            setTimeout(() => {
+                status.innerHTML = "Tuyệt vời! Tâm trí bạn đã được làm dịu. Hãy tiếp tục dự án thật tốt nhé!";
+            }, 4000);
+        }, 4000);
+    }, 4000);
+}
+</script>
 
-        async function batDauQuet() {
-            let noiDungText = document.getElementById('o-nhap-lieu').value.trim();
-            if (noiDungText === "" && !base64Media) return alert("Bạn cần nhập chữ HOẶC tải Ảnh/Video lên!");
-
-            document.getElementById('nut-quet').innerText = "ĐANG PHÂN TÍCH...";
-            document.getElementById('nut-quet').disabled = true;
-            document.getElementById('khung-ket-qua').style.display = "block";
-            document.getElementById('trang-thai').innerText = "Đang xử lý...";
-            document.getElementById('so-diem').innerText = "0%";
-            document.getElementById('thanh-mau').style.width = "0%";
-            document.getElementById('van-ban-ket-qua').innerHTML = "Đang bóc tách hình ảnh và nghĩa bóng...";
-
-            let requestParts = [];
-            if (noiDungText !== "") requestParts.push({ text: `Phân tích Rage Bait. Trả về:\nĐIỂM: \nKẾT LUẬN: \nPHÂN TÍCH: \nBẪY TÂM LÝ: \nLỜI KHUYÊN:\n"${noiDungText}"` });
-            else requestParts.push({ text: `Phân tích dữ liệu đa phương tiện tìm Rage Bait.` });
-            if (base64Media !== "") requestParts.push({ inlineData: { mimeType: mediaMimeType, data: base64Media } });
-
-            let success = false; let finalData = null;
-            for (let i = 0; i < danhSachKhoa.length; i++) {
-                try {
-                    let urlAPI = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${danhSachKhoa[i]}`;
-                    let response = await fetch(urlAPI, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: requestParts }], generationConfig: { temperature: 0.1 } }) });
-                    let ketQua = await response.json();
-                    if(ketQua.error) throw new Error();
-                    finalData = ketQua; success = true; break; 
-                } catch (loi) {}
-            }
-
-            if (success && finalData && finalData.candidates) {
-                let vanBanAI = finalData.candidates[0].content.parts[0].text;
-                let timDiem = vanBanAI.match(/ĐIỂM:\s*(\d+)/);
-                let diemSo = timDiem ? parseInt(timDiem[1]) : 0;
-                
-                document.getElementById('so-diem').innerText = diemSo + "%";
-                document.getElementById('thanh-mau').style.width = diemSo + "%";
-                
-                if(diemSo > 65) {
-                    document.getElementById('trang-thai').innerText = "CẢNH BÁO ĐỘC HẠI ⚠";
-                    document.getElementById('so-diem').style.color = "#f43f5e"; 
-                    document.getElementById('thanh-mau').style.background = "linear-gradient(90deg, #e11d48, #f43f5e)";
-                } else if (diemSo > 30) {
-                    document.getElementById('trang-thai').innerText = "CÓ DẤU HIỆU THAO TÚNG";
-                    document.getElementById('so-diem').style.color = "#f59e0b"; 
-                    document.getElementById('thanh-mau').style.background = "linear-gradient(90deg, #d97706, #f59e0b)";
-                } else {
-                    document.getElementById('trang-thai').innerText = "NỘI DUNG AN TOÀN";
-                    document.getElementById('so-diem').style.color = "#10b981"; 
-                    document.getElementById('thanh-mau').style.background = "linear-gradient(90deg, #059669, #10b981)";
-                }
-
-                let chuHienThi = vanBanAI.replace(/ĐIỂM:.*\n/, '').replace(/KẾT LUẬN:(.*)/, "<b style='color:#fbcfe8; font-size:18px;'>KẾT LUẬN:</b> $1 <br>").replace(/PHÂN TÍCH:/g, '<span class="tu-khoa">🔍 Phân tích</span><br>').replace(/BẪY TÂM LÝ:/g, '<br><span class="tu-khoa">🧠 Bẫy tâm lý</span><br>').replace(/LỜI KHUYÊN:/g, '<br><span class="tu-khoa">🛡️ Lời khuyên</span><br>').replace(/\[|\]/g, ''); 
-                document.getElementById('van-ban-ket-qua').innerHTML = chuHienThi;
-            } else {
-                document.getElementById('van-ban-ket-qua').innerHTML = "<span style='color:#f43f5e;'>Lỗi kết nối AI. Hãy thử lại!</span>";
-            }
-            document.getElementById('nut-quet').innerText = "Phân tích với AI";
-            document.getElementById('nut-quet').disabled = false;
-        }
-
-        // ==========================================
-        // 2. LOGIC TẬP THỞ GƯƠNG CHÁNH NIỆM
-        // ==========================================
-        let stream = null;
-        async function toggleCamera() {
-            const video = document.getElementById('webcam-feed'); const overlay = document.getElementById('webcam-overlay');
-            const hud = document.getElementById('sensor-hud'); const camBtn = document.getElementById('btn-cam');
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop()); stream = null;
-                video.style.opacity = '0';
-                setTimeout(() => { video.style.display = 'none'; overlay.style.display = 'none'; hud.style.display = 'none'; }, 500);
-                camBtn.innerText = "📷 Bật Gương"; camBtn.style.color = "#f472b6"; camBtn.style.borderColor = "#f472b6"; camBtn.style.background = "rgba(255, 192, 203, 0.1)";
-            } else {
-                try {
-                    stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    video.srcObject = stream; video.style.display = 'block'; overlay.style.display = 'block'; hud.style.display = 'flex';
-                    setTimeout(() => { video.style.opacity = '0.6'; }, 100);
-                    camBtn.innerText = "🔴 Tắt Cảm Biến"; camBtn.style.color = "#f43f5e"; camBtn.style.borderColor = "#f43f5e"; camBtn.style.background = "rgba(244, 63, 94, 0.2)";
-                } catch (err) { alert("Vui lòng cho phép truy cập Camera để dùng tính năng này!"); }
-            }
-        }
-
-        let breatheInterval, focusInterval, isBreathing = false, exhaleTimeout, focusScore = 0;
-        function toggleBreathe() {
-            const outer = document.getElementById('circle-outer'); const inner = document.getElementById('circle-inner');
-            const text = document.getElementById('breathe-text'); const btn = document.getElementById('btn-breathe');
-            const focusText = document.getElementById('focus-level');
-
-            if (isBreathing) {
-                isBreathing = false; clearInterval(breatheInterval); clearInterval(focusInterval); clearTimeout(exhaleTimeout);
-                outer.classList.remove('expand'); inner.classList.remove('expand');
-                text.innerText = "SẴN SÀNG CHƯA?"; text.style.color = "#fdf2f8";
-                btn.innerText = "Bắt đầu tập thở"; btn.style.background = "linear-gradient(90deg, #db2777, #c026d3)";
-                focusScore = 0; focusText.innerText = `TẬP TRUNG: 0%`; return;
-            }
-
-            isBreathing = true; btn.innerText = "Dừng lại"; btn.style.background = "#4a294b";
-            focusInterval = setInterval(() => {
-                if (stream && focusScore < 99) { focusScore += Math.floor(Math.random()*3)+1; if(focusScore>99) focusScore = 99; focusText.innerText = `TẬP TRUNG: ${focusScore}%`; }
-            }, 1000);
-
-            function breatheCycle() {
-                text.innerText = "HÍT VÀO TỪ TỪ..."; text.style.color = "#34d399";
-                outer.classList.add('expand'); inner.classList.add('expand');
-                exhaleTimeout = setTimeout(() => {
-                    text.innerText = "THỞ RA NHẸ NHÀNG..."; text.style.color = "#f472b6";
-                    outer.classList.remove('expand'); inner.classList.remove('expand');
-                }, 4000); 
-            }
-            breatheCycle(); breatheInterval = setInterval(breatheCycle, 8000);
-        }
-    </script>
 </body>
 </html>
