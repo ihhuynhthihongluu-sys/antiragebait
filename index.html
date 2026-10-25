@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZenNet - Hệ Sinh Thái Bảo Vệ Tâm Lý KHKT</title>
+    <title>ZenNet - Radar Quét Rage Bait Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         /* TỔNG QUAN UI */
-        body { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; min-height: 100vh; background-color: #1a0b1c; color: #fdf2f8; display: flex; flex-direction: column; align-items: center; padding: 20px 15px; overflow-x: hidden; position: relative;}
+        body { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; min-height: 100vh; background-color: #1a0b1c; color: #fdf2f8; display: flex; flex-direction: column; align-items: center; padding: 20px 15px; overflow-x: hidden; }
         .blob { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.6; animation: float 12s infinite alternate; }
         .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #e11d48; } 
         .blob-2 { bottom: -10%; right: -10%; width: 600px; height: 600px; background: #d946ef; animation-delay: -6s;} 
         @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
 
-        .tabs-container { display: flex; gap: 15px; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 20px; border: 1px solid rgba(244, 114, 182, 0.2); z-index: 10; flex-wrap: wrap; justify-content: center;}
-        .tab-btn { background: transparent; color: #fbcfe8; border: none; padding: 10px 20px; border-radius: 14px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-size: 13px;}
+        .tabs-container { display: flex; gap: 15px; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 20px; border: 1px solid rgba(244, 114, 182, 0.2); z-index: 10; justify-content: center;}
+        .tab-btn { background: transparent; color: #fbcfe8; border: none; padding: 10px 25px; border-radius: 14px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-size: 14px;}
         .tab-btn.active { background: linear-gradient(90deg, #db2777, #c026d3); color: white; box-shadow: 0 5px 15px rgba(219, 39, 119, 0.5); }
 
         .khung-chinh { background: rgba(45, 20, 44, 0.6); backdrop-filter: blur(20px); border-radius: 24px; padding: 30px; width: 100%; max-width: 800px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,192,203,0.15); display: none; margin-bottom: 30px; box-sizing: border-box;}
@@ -28,14 +28,14 @@
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes bounceSmall { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 
-        h2 { text-align: center; margin-top: 0; font-size: 26px; font-weight: 800; background: linear-gradient(135deg, #f472b6 0%, #c026d3 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { text-align: center; margin-top: 0; font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #f472b6 0%, #c026d3 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .chu-thich { text-align: center; color: #fbcfe8; margin-bottom: 20px; font-weight: 600; font-size: 14px;}
 
         button.btn-main { width: 100%; padding: 15px; background: linear-gradient(90deg, #db2777, #c026d3); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
         button.btn-main:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(219,39,119,0.5); }
         button.btn-main:disabled { background: #4a294b; color: #a58ca7; cursor: not-allowed; transform: none; box-shadow: none;}
 
-        /* TAB RADAR AI */
+        /* TAB 1: RADAR AI */
         textarea { width: 100%; height: 100px; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid rgba(244,114,182,0.2); border-radius: 12px; color: #fff; font-size: 15px; font-family: inherit; margin-bottom: 15px; resize: vertical;}
         textarea:focus { outline: none; border-color: #f472b6; }
         .upload-section { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
@@ -54,7 +54,7 @@
         #van-ban-ket-qua { line-height: 1.6; color: #fdf2f8; margin-top: 15px; font-size: 15px;}
         .tu-khoa { font-weight: 800; color: #fff; display: inline-block; margin-top: 15px; margin-bottom: 5px; text-transform: uppercase; font-size: 12px; background: linear-gradient(90deg, #f472b6, #d946ef); padding: 4px 12px; border-radius: 8px; }
 
-        /* TAB TẬP THỞ */
+        /* TAB 2: GƯƠNG CHÁNH NIỆM */
         .breathe-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 350px; position: relative; background: rgba(0,0,0,0.4); border-radius: 20px; margin-bottom: 20px; border: 2px solid #db2777; overflow: hidden; box-shadow: inset 0 0 40px rgba(0,0,0,0.8); }
         #webcam-feed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s; z-index: 1; transform: scaleX(-1); filter: grayscale(30%) sepia(20%) hue-rotate(280deg); }
         .webcam-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.7) 100%); z-index: 2; display: none; }
@@ -67,31 +67,7 @@
         .circle-inner.expand { width: 140px; height: 140px; background: radial-gradient(circle, rgba(52,211,153,0.8), rgba(16,185,129,0.5)); }
         .breathe-controls { display: flex; gap: 10px; margin-bottom: 20px; width: 100%;}
         .btn-cam { flex: 1; background: rgba(255, 192, 203, 0.1); border: 1px solid #f472b6; color: #f472b6; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        
-        /* TAB CHATBOT */
-        .chat-container { height: 350px; background: rgba(0,0,0,0.3); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; margin-bottom: 15px; border: 1px solid rgba(244, 114, 182, 0.15); scroll-behavior: smooth;}
-        .msg { padding: 12px 16px; border-radius: 14px; max-width: 80%; line-height: 1.5; font-size: 15px; word-wrap: break-word; position: relative; animation: popIn 0.2s ease-out;}
-        @keyframes popIn { 0% { transform: translateY(10px); opacity: 0;} 100% { transform: translateY(0); opacity: 1;} }
-        .msg.user { background: #db2777; align-self: flex-end; color: white; border-bottom-right-radius: 2px;}
-        .msg.ai { background: rgba(255,255,255,0.1); align-self: flex-start; color: #fbcfe8; border-bottom-left-radius: 2px;}
-        .typing-cursor::after { content: '▋'; animation: blink 0.8s infinite; color: #f472b6; margin-left: 4px; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-        .chat-input-area { display: flex; gap: 10px; width: 100%;}
-        .chat-input-area input { flex: 1; padding: 15px; border-radius: 12px; border: 1px solid rgba(244,114,182,0.3); background: rgba(0,0,0,0.4); color: white; font-family: inherit; font-size: 15px; transition: 0.3s;}
-        .chat-input-area input:focus { outline: none; border-color: #f472b6; box-shadow: 0 0 15px rgba(244,114,182,0.3);}
-        .chat-input-area button { padding: 15px 25px; background: linear-gradient(90deg, #db2777, #c026d3); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s;}
-        
-        .emergency-alert {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(225, 29, 72, 0.95); color: white; padding: 15px 25px;
-            border-radius: 12px; font-weight: bold; font-size: 15px; display: none;
-            box-shadow: 0 10px 30px rgba(225, 29, 72, 0.6); z-index: 1000;
-            border: 2px solid #fff; text-align: center; line-height: 1.5;
-            animation: slideDownAlert 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes slideDownAlert { from { top: -100px; opacity: 0; } to { top: 20px; opacity: 1; } }
-        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); } ::-webkit-scrollbar-thumb { background: rgba(219, 39, 119, 0.3); border-radius: 4px; }
+        .breathe-tip { font-size: 14px; color: #cbd5e1; text-align: center; line-height: 1.6; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; border-left: 4px solid #10b981; }
     </style>
 </head>
 <body>
@@ -99,26 +75,23 @@
     <div class="blob blob-1"></div><div class="blob blob-2"></div>
 
     <div class="mascot-container">
-        <div class="bubble" id="mascot-bubble">ZenNet xin chào! Bạn cần quét bài viết hay muốn tâm sự? ✨</div>
+        <div class="bubble" id="mascot-bubble">ZenNet xin chào! Gửi bài viết cho mình hoặc sang Gương Chánh Niệm nhé! ✨</div>
         <img class="chibi-mascot" id="hinh-mascot" src="https://cdn-icons-png.flaticon.com/512/4712/4712010.png" alt="Chibi AI">
-    </div>
-
-    <div class="emergency-alert" id="emergency-alert">
-        🚨 <b>PHÁT HIỆN RỦI RO NGHIÊM TRỌNG</b> 🚨<br>
-        <span style="font-size: 13px; font-weight: normal;">Hệ thống đã tự động gửi cảnh báo khẩn cấp đến GVCN.</span>
     </div>
 
     <!-- MENU TABS -->
     <div class="tabs-container">
         <button class="tab-btn active" onclick="switchTab('tab-radar', this)">🔍 Trạm Quét AI</button>
         <button class="tab-btn" onclick="switchTab('tab-breathe', this)">🌿 Gương Chánh Niệm</button>
-        <button class="tab-btn" onclick="switchTab('tab-chat', this)">💬 Chat Tâm Sự</button>
     </div>
 
     <!-- TAB 1: RADAR AI -->
     <div id="tab-radar" class="khung-chinh active">
         <h2>RADAR QUÉT RAGE BAIT</h2>
-        <div class="input-group"><textarea id="o-nhap-lieu" placeholder="Dán nội dung bài viết..."></textarea></div>
+        <p class="chu-thich">Nhận diện Cảm xúc Đa phương thức (Gemini)</p>
+        <div class="input-group">
+            <textarea id="o-nhap-lieu" placeholder="Dán nội dung bài viết, bình luận (hoặc để trống nếu tải Ảnh/Video lên nhé)..."></textarea>
+        </div>
         <div class="upload-section">
             <label class="upload-btn" for="mediaInput">🎬 Tải Ảnh / Video ngắn</label>
             <input type="file" id="mediaInput" accept="image/*,video/*" onchange="previewMedia(event)">
@@ -131,39 +104,36 @@
         <button class="btn-main" id="nut-quet" onclick="batDauQuet()">Phân tích với AI</button>
         <div class="ket-qua-box" id="khung-ket-qua">
             <div class="diem-so-container">
-                <span class="tieude-ketqua" id="trang-thai">Đang kết nối...</span><span class="so-diem-to" id="so-diem" style="color: #f472b6;">0%</span>
+                <span class="tieude-ketqua" id="trang-thai">Đang kết nối...</span>
+                <span class="so-diem-to" id="so-diem" style="color: #f472b6;">0%</span>
             </div>
             <div class="thanh-diem-bg"><div class="thanh-diem" id="thanh-mau"></div></div>
             <div id="van-ban-ket-qua"></div>
         </div>
     </div>
 
-    <!-- TAB 2: TRẠM CHỮA LÀNH -->
+    <!-- TAB 2: TRẠM CHỮA LÀNH (CAMERA SENSOR & THỞ TỰ NHIÊN) -->
     <div id="tab-breathe" class="khung-chinh">
         <h2>GƯƠNG CHÁNH NIỆM</h2>
+        <p class="chu-thich">Nhìn nhận bản thân và làm dịu cơn giận</p>
         <div class="breathe-container">
             <video id="webcam-feed" autoplay playsinline muted></video>
             <div class="webcam-overlay" id="webcam-overlay"></div>
-            <div class="sensor-hud" id="sensor-hud"><div class="hud-item">SYS: TÍCH CỰC</div><div class="hud-item" id="focus-level">TẬP TRUNG: 0%</div></div>
+            <div class="sensor-hud" id="sensor-hud">
+                <div class="hud-item">SYS: TÍCH CỰC</div>
+                <div class="hud-item" id="focus-level">TẬP TRUNG: 0%</div>
+            </div>
             <div class="breathe-text" id="breathe-text">SẴN SÀNG CHƯA?</div>
-            <div class="circle-outer" id="circle-outer"><div class="circle-inner" id="circle-inner"></div></div>
+            <div class="circle-outer" id="circle-outer">
+                <div class="circle-inner" id="circle-inner"></div>
+            </div>
         </div>
         <div class="breathe-controls">
             <button class="btn-cam" id="btn-cam" onclick="toggleCamera()">📷 Bật Gương</button>
             <button class="btn-main" id="btn-breathe" onclick="toggleBreathe()">Bắt đầu tập thở</button>
         </div>
-    </div>
-
-    <!-- TAB 3: CHATBOT HYBRID AI -->
-    <div id="tab-chat" class="khung-chinh">
-        <h2>CHUYÊN GIA TÂM LÝ AI</h2>
-        <p class="chu-thich">Tích hợp Edge AI - Phản hồi tức thì (0.01s)</p>
-        <div class="chat-container" id="chat-history">
-            <div class="msg ai">Chào bạn! Mình là AI hỗ trợ tâm lý học đường. Bạn đang cảm thấy thế nào, cứ tâm sự với mình nhé!</div>
-        </div>
-        <div class="chat-input-area">
-            <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." onkeypress="handleEnter(event)">
-            <button onclick="sendChatMessage()">Gửi 💬</button>
+        <div class="breathe-tip" style="margin-top: 20px;">
+            <b>💡 Khoa học Hành vi:</b> Bật Camera để nhìn vào biểu cảm của chính mình kết hợp nhịp thở thư giãn (4 giây hít vào - 4 giây thở ra) giúp ngắt chuỗi phản ứng bức bối, giúp lấy lại sự bình tĩnh khi lướt mạng.
         </div>
     </div>
 
@@ -177,27 +147,50 @@
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.khung-chinh').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active'); btnElement.classList.add('active');
-            if(isBreathing) toggleBreathe(); 
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+
+            if(tabId === 'tab-breathe') {
+                document.getElementById('mascot-bubble').innerText = "Thử bật Gương Chánh Niệm lên và hít thở nhẹ nhàng nha! 🌿";
+            } else {
+                document.getElementById('mascot-bubble').innerText = "Đã sạc đầy năng lượng! Có bài viết nào cần quét không? ✨";
+                if(isBreathing) toggleBreathe();
+            }
         }
 
-        // --- CÁC HÀM CỦA RADAR VÀ CAMERA GIỮ NGUYÊN ---
+        // ==========================================
+        // 1. LOGIC RADAR AI (ĐA PHƯƠNG THỨC & 3 API KEYS)
+        // ==========================================
         let base64Media = ""; let mediaMimeType = "";
+
         function previewMedia(event) {
             const file = event.target.files[0];
             if (file) {
-                mediaMimeType = file.type; const reader = new FileReader();
+                if(file.size > 15 * 1024 * 1024) return alert("Video quá lớn. Hãy tải video < 15MB nhé!");
+                mediaMimeType = file.type;
+                const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('previewContainer').style.display = 'block';
-                    if(mediaMimeType.startsWith('video/')) { document.getElementById('imgPreview').style.display = 'none'; document.getElementById('vidPreview').src = e.target.result; document.getElementById('vidPreview').style.display = 'block'; } 
-                    else { document.getElementById('vidPreview').style.display = 'none'; document.getElementById('imgPreview').src = e.target.result; document.getElementById('imgPreview').style.display = 'block'; }
+                    if(mediaMimeType.startsWith('video/')) {
+                        document.getElementById('imgPreview').style.display = 'none';
+                        document.getElementById('vidPreview').src = e.target.result;
+                        document.getElementById('vidPreview').style.display = 'block';
+                    } else {
+                        document.getElementById('vidPreview').style.display = 'none';
+                        document.getElementById('imgPreview').src = e.target.result;
+                        document.getElementById('imgPreview').style.display = 'block';
+                    }
                     base64Media = e.target.result.split(',')[1];
                 }
                 reader.readAsDataURL(file);
             }
         }
-        function removeMedia() { document.getElementById('mediaInput').value = ""; document.getElementById('previewContainer').style.display = 'none'; base64Media = ""; mediaMimeType = ""; }
-        
+
+        function removeMedia() {
+            document.getElementById('mediaInput').value = ""; document.getElementById('previewContainer').style.display = 'none';
+            base64Media = ""; mediaMimeType = "";
+        }
+
         async function batDauQuet() {
             let noiDungText = document.getElementById('o-nhap-lieu').value.trim();
             if (noiDungText === "" && !base64Media) return alert("Bạn cần nhập chữ HOẶC tải Ảnh/Video lên!");
@@ -235,11 +228,18 @@
                 document.getElementById('thanh-mau').style.width = diemSo + "%";
                 
                 if(diemSo > 65) {
-                    document.getElementById('trang-thai').innerText = "CẢNH BÁO ĐỘC HẠI ⚠"; document.getElementById('so-diem').style.color = "#f43f5e"; document.getElementById('thanh-mau').style.background = "linear-gradient(90deg, #e11d48, #f43f5e)";
+                    document.getElementById('trang-thai').innerText = "CẢNH BÁO ĐỘC HẠI ⚠";
+                    document.getElementById('so-diem').style.color = "#f43f5e"; 
+                    document.getElementById('thanh-mau').style.background = "linear-gradient(90deg, #e11d48, #f43f5e)";
+                    document.getElementById('mascot-bubble').innerText = "Bài này độc quá, qua Gương Chánh Niệm thở xíu đi nha 🚨";
                 } else if (diemSo > 30) {
-                    document.getElementById('trang-thai').innerText = "CÓ DẤU HIỆU THAO TÚNG"; document.getElementById('so-diem').style.color = "#f59e0b"; document.getElementById('thanh-mau').style.background = "linear-gradient(90deg, #d97706, #f59e0b)";
+                    document.getElementById('trang-thai').innerText = "CÓ DẤU HIỆU THAO TÚNG";
+                    document.getElementById('so-diem').style.color = "#f59e0b"; 
+                    document.getElementById('thanh-mau').style.background = "linear-gradient(90deg, #d97706, #f59e0b)";
                 } else {
-                    document.getElementById('trang-thai').innerText = "NỘI DUNG AN TOÀN"; document.getElementById('so-diem').style.color = "#10b981"; document.getElementById('thanh-mau').style.background = "linear-gradient(90deg, #059669, #10b981)";
+                    document.getElementById('trang-thai').innerText = "NỘI DUNG AN TOÀN";
+                    document.getElementById('so-diem').style.color = "#10b981"; 
+                    document.getElementById('thanh-mau').style.background = "linear-gradient(90deg, #059669, #10b981)";
                 }
 
                 let chuHienThi = vanBanAI.replace(/ĐIỂM:.*\n/, '').replace(/KẾT LUẬN:(.*)/, "<b style='color:#fbcfe8; font-size:18px;'>KẾT LUẬN:</b> $1 <br>").replace(/PHÂN TÍCH:/g, '<span class="tu-khoa">🔍 Phân tích</span><br>').replace(/BẪY TÂM LÝ:/g, '<br><span class="tu-khoa">🧠 Bẫy tâm lý</span><br>').replace(/LỜI KHUYÊN:/g, '<br><span class="tu-khoa">🛡️ Lời khuyên</span><br>').replace(/\[|\]/g, ''); 
@@ -251,111 +251,57 @@
             document.getElementById('nut-quet').disabled = false;
         }
 
+        // ==========================================
+        // 2. LOGIC TẬP THỞ TỰ NHIÊN & CAMERA SENSOR
+        // ==========================================
         let stream = null;
-        async function toggleCamera() { /* Giữ nguyên hàm Camera */ }
-        let breatheInterval, focusInterval, isBreathing = false, exhaleTimeout, focusScore = 0;
-        function toggleBreathe() { /* Giữ nguyên hàm Thở */ }
+        async function toggleCamera() {
+            const video = document.getElementById('webcam-feed'); const overlay = document.getElementById('webcam-overlay');
+            const hud = document.getElementById('sensor-hud'); const camBtn = document.getElementById('btn-cam');
 
-        // ==========================================
-        // 3. CHATBOT HYBRID AI - SỬA LỖI ĐỘ TRỄ MẠNG
-        // ==========================================
-        
-        // BỘ NÃO CỤC BỘ (EDGE NLP BRAIN)
-        const edgeBrain = [
-            { regex: /(chào|hi|hello)/i, reply: "Chào bạn! Hôm nay đi học có vui không, kể mình nghe với." },
-            { regex: /(điểm kém|rớt môn|học dốt|bị la|áp lực)/i, reply: "Điểm số không định nghĩa được con người bạn đâu. Cho phép bản thân buồn một chút, rồi lại mỉm cười cố gắng tiếp nha!" },
-            { regex: /(chia tay|thất tình|crush|người yêu)/i, reply: "Chuyện tình cảm tuổi học trò thường để lại nhiều tiếc nuối. Hãy dành thời gian này để yêu thương bản thân mình nhiều hơn nhé." },
-            { regex: /(cô lập|chơi xấu|bắt nạt|tẩy chay)/i, reply: "Bị quay lưng là cảm giác rất tệ. Nhưng bạn không cô đơn, hãy tìm đến những người thực sự trân trọng bạn. Nếu bị bắt nạt, hãy báo cho thầy cô ngay nhé!" },
-            { regex: /(cảm ơn|tks|thank)/i, reply: "Không có gì đâu nè! Giúp được bạn là mình vui rồi. Nhớ giữ gìn sức khỏe tinh thần nhé! 🥰" }
-        ];
-
-        const dangerKeywords = ["tự tử", "chết", "tuyệt vọng", "bỏ nhà", "không muốn sống"];
-
-        function handleEnter(e) { if(e.key === 'Enter') sendChatMessage(); }
-
-        // Hàm gõ chữ mô phỏng nối tiếp nội dung, không ghi đè
-        function typeTextInstantly(elementId, text, speed = 20) {
-            let el = document.getElementById(elementId);
-            let i = 0;
-            let interval = setInterval(() => {
-                if (i < text.length) { 
-                    el.innerHTML += text.charAt(i); 
-                    i++; 
-                    chatBoxScroll(); 
-                } else { 
-                    clearInterval(interval); 
-                    el.classList.remove('typing-cursor'); 
-                }
-            }, speed);
-        }
-        function chatBoxScroll() { let chatBox = document.getElementById('chat-history'); chatBox.scrollTop = chatBox.scrollHeight; }
-
-        async function sendChatMessage() {
-            let inputField = document.getElementById('chat-input');
-            let userText = inputField.value.trim();
-            if(userText === "") return;
-
-            inputField.value = "";
-            let chatBox = document.getElementById('chat-history');
-            chatBox.innerHTML += `<div class="msg user">${userText}</div>`;
-            chatBoxScroll();
-
-            let typingId = "typing-" + Date.now();
-            chatBox.innerHTML += `<div class="msg ai typing-cursor" id="${typingId}"></div>`;
-            
-            // 1. KIỂM TRA BÁO ĐỘNG ĐỎ
-            if (dangerKeywords.some(kw => userText.toLowerCase().includes(kw))) {
-                triggerEmergencyAlert();
-                typeTextInstantly(typingId, "Mình đang ở đây cùng bạn! Hãy bình tĩnh lại, mọi chuyện rồi sẽ có cách giải quyết. Mình đã báo cho thầy cô đến hỗ trợ bạn ngay lập tức! Bạn không cô đơn đâu!");
-                return;
-            }
-
-            // 2. KIỂM TRA BỘ NÃO LOCAL
-            for (let rule of edgeBrain) {
-                if (rule.regex.test(userText.toLowerCase())) {
-                    typeTextInstantly(typingId, rule.reply);
-                    return; 
-                }
-            }
-
-            // 3. ZERO-LATENCY UX (KẾT NỐI API)
-            let fillerText = "Mình đang lắng nghe bạn đây... ";
-            let el = document.getElementById(typingId);
-            el.innerHTML = fillerText;
-
-            let systemPrompt = `Bạn là chuyên gia tư vấn tâm lý học đường ZenNet. Tiếp nối ý: "${fillerText}". 
-YÊU CẦU: Trả lời ngắn gọn (1-2 câu), thấu cảm. Câu hỏi của học sinh: "${userText}"`;
-
-            let success = false;
-            for (let i = 0; i < danhSachKhoa.length; i++) {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop()); stream = null;
+                video.style.opacity = '0';
+                setTimeout(() => { video.style.display = 'none'; overlay.style.display = 'none'; hud.style.display = 'none'; }, 500);
+                camBtn.innerText = "📷 Bật Gương"; camBtn.style.color = "#f472b6"; camBtn.style.borderColor = "#f472b6"; camBtn.style.background = "rgba(255, 192, 203, 0.1)";
+            } else {
                 try {
-                    let urlAPI = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${danhSachKhoa[i]}`;
-                    let response = await fetch(urlAPI, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: systemPrompt }] }], generationConfig: { temperature: 0.7, maxOutputTokens: 60 } }) });
-                    let ketQua = await response.json();
-                    if(ketQua.error) throw new Error();
-                    
-                    success = true;
-                    let aiResponse = ketQua.candidates[0].content.parts[0].text;
-                    
-                    // Xóa phần Filler Text AI vô tình lặp lại (nếu có) để tránh lặp từ
-                    aiResponse = aiResponse.replace(fillerText, "").replace("Mình đang lắng nghe bạn đây.", "").trim();
-                    
-                    // Gõ nối tiếp
-                    typeTextInstantly(typingId, " " + aiResponse);
-                    break;
-                } catch (loi) {}
-            }
-
-            if (!success) {
-                el.classList.remove('typing-cursor');
-                el.innerHTML = "<span style='color:#f43f5e;'>Xin lỗi, hệ thống mạng đang chập chờn. Bạn thử nói lại nhé!</span>";
+                    stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    video.srcObject = stream; video.style.display = 'block'; overlay.style.display = 'block'; hud.style.display = 'flex';
+                    setTimeout(() => { video.style.opacity = '0.6'; }, 100);
+                    camBtn.innerText = "🔴 Tắt Cảm Biến"; camBtn.style.color = "#f43f5e"; camBtn.style.borderColor = "#f43f5e"; camBtn.style.background = "rgba(244, 63, 94, 0.2)";
+                } catch (err) { alert("Vui lòng cho phép truy cập Camera để dùng tính năng này!"); }
             }
         }
 
-        function triggerEmergencyAlert() {
-            let alertBox = document.getElementById('emergency-alert'); alertBox.style.display = 'block';
-            document.getElementById('mascot-bubble').innerText = "Hệ thống đã kết nối với GVCN! Hãy bình tĩnh! 🆘"; document.getElementById('mascot-bubble').style.background = "#e11d48";
-            setTimeout(() => { alertBox.style.display = 'none'; document.getElementById('mascot-bubble').innerText = "Cứ chia sẻ thoải mái nhé! 🚀"; document.getElementById('mascot-bubble').style.background = "#db2777"; }, 8000);
+        let breatheInterval, focusInterval, isBreathing = false, exhaleTimeout, focusScore = 0;
+        function toggleBreathe() {
+            const outer = document.getElementById('circle-outer'); const inner = document.getElementById('circle-inner');
+            const text = document.getElementById('breathe-text'); const btn = document.getElementById('btn-breathe');
+            const focusText = document.getElementById('focus-level');
+
+            if (isBreathing) {
+                isBreathing = false; clearInterval(breatheInterval); clearInterval(focusInterval); clearTimeout(exhaleTimeout);
+                outer.classList.remove('expand'); inner.classList.remove('expand');
+                text.innerText = "SẴN SÀNG CHƯA?"; text.style.color = "#fdf2f8";
+                btn.innerText = "Bắt đầu tập thở"; btn.style.background = "linear-gradient(90deg, #db2777, #c026d3)";
+                focusScore = 0; focusText.innerText = `TẬP TRUNG: 0%`; return;
+            }
+
+            isBreathing = true; btn.innerText = "Dừng lại"; btn.style.background = "#4a294b";
+            focusInterval = setInterval(() => {
+                if (stream && focusScore < 99) { focusScore += Math.floor(Math.random()*3)+1; if(focusScore>99) focusScore = 99; focusText.innerText = `TẬP TRUNG: ${focusScore}%`; }
+            }, 1000);
+
+            function breatheCycle() {
+                text.innerText = "HÍT VÀO TỪ TỪ..."; text.style.color = "#34d399";
+                outer.classList.add('expand'); inner.classList.add('expand');
+                exhaleTimeout = setTimeout(() => {
+                    text.innerText = "THỞ RA NHẸ NHÀNG..."; text.style.color = "#f472b6";
+                    outer.classList.remove('expand'); inner.classList.remove('expand');
+                }, 4000); 
+            }
+            breatheCycle(); breatheInterval = setInterval(breatheCycle, 8000);
         }
     </script>
 </body>
