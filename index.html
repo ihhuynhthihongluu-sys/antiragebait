@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZenNet - Radar Quét Rage Bait Pro</title>
+    <title>ZenNet - Check Rage Bait Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; min-height: 100vh; background-color: #1a0b1c; color: #fdf2f8; display: flex; flex-direction: column; align-items: center; padding: 20px 15px; overflow-x: hidden; }
@@ -13,19 +13,16 @@
         @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
 
         .tabs-container { display: flex; gap: 15px; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 20px; border: 1px solid rgba(244, 114, 182, 0.2); z-index: 10; justify-content: center;}
-        .tab-btn { background: transparent; color: #fbcfe8; border: none; padding: 10px 25px; border-radius: 14px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-size: 14px;}
+        .tab-btn { background: transparent; color: #fbcfe8; border: none; padding: 12px 25px; border-radius: 14px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-size: 15px; letter-spacing: 0.5px;}
         .tab-btn.active { background: linear-gradient(90deg, #db2777, #c026d3); color: white; box-shadow: 0 5px 15px rgba(219, 39, 119, 0.5); }
 
         .khung-chinh { background: rgba(45, 20, 44, 0.6); backdrop-filter: blur(20px); border-radius: 24px; padding: 30px; width: 100%; max-width: 800px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,192,203,0.15); display: none; margin-bottom: 30px; box-sizing: border-box;}
         .khung-chinh.active { display: block; animation: fadeIn 0.5s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .mascot-container { display: flex; flex-direction: column; align-items: center; margin-top: -30px; margin-bottom: 20px; }
-        .bubble { background: #db2777; color: white; padding: 8px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; margin-bottom: 10px; position: relative; box-shadow: 0 5px 15px rgba(219, 39, 119, 0.4); animation: bounceSmall 2s infinite ease-in-out; text-align: center;}
-        .bubble::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); border-width: 8px 8px 0; border-style: solid; border-color: #db2777 transparent; }
-        .chibi-mascot { width: 110px; filter: drop-shadow(0 10px 15px rgba(219, 39, 119, 0.5)); animation: bounce 2.5s infinite ease-in-out; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes bounceSmall { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+        .mascot-container { display: flex; flex-direction: column; align-items: center; margin-top: -10px; margin-bottom: 20px; }
+        .chibi-mascot { width: 90px; filter: drop-shadow(0 10px 15px rgba(219, 39, 119, 0.5)); animation: bounce 2.5s infinite ease-in-out; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
         h2 { text-align: center; margin-top: 0; font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #f472b6 0%, #c026d3 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .chu-thich { text-align: center; color: #fbcfe8; margin-bottom: 20px; font-weight: 600; font-size: 14px;}
@@ -34,7 +31,7 @@
         button.btn-main:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(219,39,119,0.5); }
         button.btn-main:disabled { background: #4a294b; color: #a58ca7; cursor: not-allowed; transform: none; box-shadow: none;}
 
-        textarea { width: 100%; height: 100px; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid rgba(244,114,182,0.2); border-radius: 12px; color: #fff; font-size: 15px; font-family: inherit; margin-bottom: 15px; resize: vertical;}
+        textarea { width: 100%; height: 120px; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid rgba(244,114,182,0.2); border-radius: 12px; color: #fff; font-size: 16px; font-family: inherit; margin-bottom: 15px; resize: vertical;}
         textarea:focus { outline: none; border-color: #f472b6; }
         .upload-section { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .upload-btn { background: rgba(255, 192, 203, 0.1); border: 1px dashed rgba(244, 114, 182, 0.4); border-radius: 12px; padding: 12px 20px; cursor: pointer; font-size: 14px; font-weight: 600; color: #f472b6; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
@@ -43,14 +40,20 @@
         .media-preview-container { position: relative; display: none; }
         .media-preview { max-width: 120px; max-height: 120px; border-radius: 10px; border: 2px solid #db2777; object-fit: cover; }
         .remove-media-btn { position: absolute; top: -8px; right: -8px; background: #e11d48; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; }
-        .ket-qua-box { margin-top: 20px; padding: 20px; border-radius: 16px; background: rgba(0,0,0,0.4); display: none; }
+        
+        .ket-qua-box { margin-top: 20px; padding: 25px; border-radius: 16px; background: rgba(0,0,0,0.5); border: 1px solid rgba(219, 39, 119, 0.3); display: none; }
         .diem-so-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px;}
         .tieude-ketqua { font-size: 16px; color: #fbcfe8; font-weight: 600; text-transform: uppercase; }
-        .so-diem-to { font-size: 36px; font-weight: 800; line-height: 1; }
-        .thanh-diem-bg { width: 100%; background: #2b1329; height: 15px; border-radius: 10px; margin: 10px 0; overflow: hidden; }
-        .thanh-diem { height: 100%; width: 0%; background: #10b981; transition: 1s; }
-        #van-ban-ket-qua { line-height: 1.6; color: #fdf2f8; margin-top: 15px; font-size: 15px;}
-        .tu-khoa { font-weight: 800; color: #fff; display: inline-block; margin-top: 15px; margin-bottom: 5px; text-transform: uppercase; font-size: 12px; background: linear-gradient(90deg, #f472b6, #d946ef); padding: 4px 12px; border-radius: 8px; }
+        .so-diem-to { font-size: 42px; font-weight: 800; line-height: 1; min-width: 80px; text-align: right;}
+        
+        .thanh-diem-bg { width: 100%; background: #2b1329; height: 18px; border-radius: 10px; margin: 15px 0; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);}
+        .thanh-diem { height: 100%; width: 0%; background: #10b981; transition: width 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.5s; position: relative;}
+        .thanh-diem::after { content: ""; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent); background-size: 20px 20px; animation: moveStripes 1s linear infinite; }
+        @keyframes moveStripes { 0% { background-position: 0 0; } 100% { background-position: 20px 0; } }
+
+        #van-ban-ket-qua { line-height: 1.8; color: #fdf2f8; margin-top: 20px; font-size: 16px; text-align: justify;}
+        .tu-khoa { font-weight: 800; color: #fff; display: block; width: fit-content; margin-top: 30px; margin-bottom: 15px; text-transform: uppercase; font-size: 14px; background: linear-gradient(90deg, #f472b6, #d946ef); padding: 6px 16px; border-radius: 8px; box-shadow: 0 4px 10px rgba(219, 39, 119, 0.3); clear: both;}
+        .ket-luan-highlight { font-size: 20px; border-bottom: 1px solid rgba(244, 114, 182, 0.3); padding-bottom: 10px; margin-bottom: 20px; }
 
         .breathe-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 350px; position: relative; background: rgba(0,0,0,0.4); border-radius: 20px; margin-bottom: 20px; border: 2px solid #db2777; overflow: hidden; box-shadow: inset 0 0 40px rgba(0,0,0,0.8); }
         #webcam-feed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s; z-index: 1; transform: scaleX(-1); filter: grayscale(30%) sepia(20%) hue-rotate(280deg); }
@@ -72,32 +75,29 @@
     <div class="blob blob-1"></div><div class="blob blob-2"></div>
 
     <div class="mascot-container">
-        <div class="bubble" id="mascot-bubble">ZenNet xin chào! Gửi bài viết cho mình hoặc sang Gương Chánh Niệm nhé! ✨</div>
         <img class="chibi-mascot" id="hinh-mascot" src="https://cdn-icons-png.flaticon.com/512/4712/4712010.png" alt="Chibi AI">
     </div>
 
     <div class="tabs-container">
-        <button class="tab-btn active" onclick="switchTab('tab-radar', this)">🔍 Trạm Quét AI</button>
-        <button class="tab-btn" onclick="switchTab('tab-breathe', this)">🌿 Gương Chánh Niệm</button>
+        <button class="tab-btn active" onclick="switchTab('tab-radar', this)">Check Ragebait</button>
+        <button class="tab-btn" onclick="switchTab('tab-breathe', this)">Làm dịu cơn giận dữ</button>
     </div>
 
-    <!-- TAB 1: RADAR AI -->
     <div id="tab-radar" class="khung-chinh active">
-        <h2>RADAR QUÉT RAGE BAIT</h2>
-        <p class="chu-thich">Hệ thống Phân tích Độc lập (Local Smart Engine)</p>
+        <h2>CHECK RAGE BAIT</h2>
+        <br>
         <div class="input-group">
             <textarea id="o-nhap-lieu" placeholder="Dán nội dung bài viết, bình luận cần quét vào đây..."></textarea>
         </div>
         <div class="upload-section">
-            <label class="upload-btn" for="mediaInput">🎬 Tải Ảnh / Video ngắn</label>
-            <input type="file" id="mediaInput" accept="image/*,video/*" onchange="previewMedia(event)">
+            <label class="upload-btn" for="mediaInput">🎬 Tải Ảnh/Video (Hoặc dán văn bản)</label>
+            <input type="file" id="mediaInput" accept="image/*, video/*" onchange="previewMedia(event)">
             <div class="media-preview-container" id="previewContainer">
                 <img class="media-preview" id="imgPreview" src="" alt="Xem trước" style="display:none;">
-                <video class="media-preview" id="vidPreview" src="" controls style="display:none;"></video>
                 <button class="remove-media-btn" onclick="removeMedia()">✕</button>
             </div>
         </div>
-        <button class="btn-main" id="nut-quet" onclick="batDauQuet()">Phân tích nội dung</button>
+        <button class="btn-main" id="nut-quet" onclick="batDauQuetGroq()">Phân tích tự động</button>
         <div class="ket-qua-box" id="khung-ket-qua">
             <div class="diem-so-container">
                 <span class="tieude-ketqua" id="trang-thai">Đang xử lý...</span>
@@ -108,10 +108,9 @@
         </div>
     </div>
 
-    <!-- TAB 2: TRẠM CHỮA LÀNH -->
     <div id="tab-breathe" class="khung-chinh">
-        <h2>GƯƠNG CHÁNH NIỆM</h2>
-        <p class="chu-thich">Nhìn nhận bản thân và làm dịu cơn giận</p>
+        <h2>LÀM DỊU CƠN GIẬN DỮ</h2>
+        <p class="chu-thich">Nhìn nhận bản thân và làm dịu cảm xúc</p>
         <div class="breathe-container">
             <video id="webcam-feed" autoplay playsinline muted></video>
             <div class="webcam-overlay" id="webcam-overlay"></div>
@@ -129,123 +128,251 @@
             <button class="btn-main" id="btn-breathe" onclick="toggleBreathe()">Bắt đầu tập thở</button>
         </div>
         <div class="breathe-tip" style="margin-top: 20px;">
-            <b>💡 Khoa học Hành vi:</b> Bật Camera để nhìn vào biểu cảm của chính mình kết hợp nhịp thở thư giãn (4 giây hít vào - 4 giây thở ra) giúp ngắt chuỗi phản ứng bức bối, giúp lấy lại sự bình tĩnh khi lướt mạng.
+            <b>💡 Khoa học Hành vi:</b> Bật Camera để nhìn vào biểu cảm của chính mình kết hợp nhịp thở thư giãn giúp lấy lại bình tĩnh.
         </div>
     </div>
 
     <script>
+        const GROQ_API_KEY = "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";
+
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.khung-chinh').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             btnElement.classList.add('active');
-
-            if(tabId === 'tab-breathe') {
-                document.getElementById('mascot-bubble').innerText = "Thử bật Gương Chánh Niệm lên và hít thở nhẹ nhàng nha! 🌿";
-            } else {
-                document.getElementById('mascot-bubble').innerText = "Đã sạc đầy năng lượng! Có bài viết nào cần quét không? ✨";
-                if(isBreathing) toggleBreathe();
-            }
         }
 
-        let base64Media = ""; let mediaMimeType = "";
-
+        let base64Media = ""; 
         function previewMedia(event) {
             const file = event.target.files[0];
             if (file) {
-                if(file.size > 15 * 1024 * 1024) return alert("Video quá lớn. Hãy tải video < 15MB nhé!");
-                mediaMimeType = file.type;
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('previewContainer').style.display = 'block';
-                    if(mediaMimeType.startsWith('video/')) {
-                        document.getElementById('imgPreview').style.display = 'none';
-                        document.getElementById('vidPreview').src = e.target.result;
-                        document.getElementById('vidPreview').style.display = 'block';
-                    } else {
-                        document.getElementById('vidPreview').style.display = 'none';
-                        document.getElementById('imgPreview').src = e.target.result;
-                        document.getElementById('imgPreview').style.display = 'block';
+                const previewContainer = document.getElementById('previewContainer');
+                const imgPreview = document.getElementById('imgPreview');
+                previewContainer.style.display = 'block';
+
+                if (file.type.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.src = URL.createObjectURL(file);
+                    video.muted = true;
+                    video.play();
+                    
+                    video.addEventListener('loadeddata', () => {
+                        video.currentTime = 1; 
+                    });
+                    
+                    video.addEventListener('seeked', () => {
+                        const canvas = document.createElement('canvas');
+                        let w = video.videoWidth;
+                        let h = video.videoHeight;
+                        
+                        if (w > 800) { h = h * (800 / w); w = 800; }
+                        
+                        canvas.width = w;
+                        canvas.height = h;
+                        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                        
+                        base64Media = canvas.toDataURL('image/jpeg', 0.6);
+                        imgPreview.src = base64Media;
+                        imgPreview.style.display = 'block';
+                        video.pause();
+                    });
+                } else {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const canvas = document.createElement('canvas');
+                            let w = img.width;
+                            let h = img.height;
+                            
+                            if (w > 800) { h = h * (800 / w); w = 800; }
+                            
+                            canvas.width = w;
+                            canvas.height = h;
+                            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                            
+                            base64Media = canvas.toDataURL('image/jpeg', 0.6);
+                            imgPreview.src = base64Media;
+                            imgPreview.style.display = 'block';
+                        }
+                        img.src = e.target.result;
                     }
-                    base64Media = e.target.result.split(',')[1];
+                    reader.readAsDataURL(file);
                 }
-                reader.readAsDataURL(file);
             }
         }
 
         function removeMedia() {
-            document.getElementById('mediaInput').value = ""; document.getElementById('previewContainer').style.display = 'none';
-            base64Media = ""; mediaMimeType = "";
+            document.getElementById('mediaInput').value = ""; 
+            document.getElementById('previewContainer').style.display = 'none';
+            base64Media = ""; 
         }
 
-        // ĐỘNG CƠ PHÂN TÍCH THÔNG MINH ĐỘC LẬP (KHÔNG CẦN API KEY / MẠNG INTERNET)
-        function batDauQuet() {
+        async function batDauQuetGroq() {
             let noiDungText = document.getElementById('o-nhap-lieu').value.trim();
-            if (noiDungText === "" && !base64Media) return alert("Bạn cần nhập nội dung bài viết HOẶC tải Ảnh/Video lên!");
+            if (noiDungText === "" && !base64Media) return alert("Bạn cần nhập nội dung bài viết hoặc tải lên hình/video cần phân tích!");
 
-            document.getElementById('nut-quet').innerText = "ĐANG PHÂN TÍCH...";
+            document.getElementById('nut-quet').innerText = "ĐANG TÍNH TOÁN DỮ LIỆU...";
             document.getElementById('nut-quet').disabled = true;
-            document.getElementById('khung-ket-qua').style.display = "block";
-            document.getElementById('trang-thai').innerText = "Đang quét ngữ nghĩa...";
-            document.getElementById('so-diem').innerText = "0%";
-            document.getElementById('thanh-mau').style.width = "0%";
-            document.getElementById('van-ban-ket-qua').innerHTML = "Đang bóc tách từ khóa và cấu trúc giật gân...";
+            let ketQuaBox = document.getElementById('khung-ket-qua');
+            ketQuaBox.style.display = "block";
+            document.getElementById('trang-thai').innerText = "Đang kết nối API...";
+            
+            let thanhMau = document.getElementById('thanh-mau');
+            let soDiem = document.getElementById('so-diem');
+            thanhMau.style.width = "0%";
+            soDiem.innerText = "0%";
+            
+            let vanBanKetQua = document.getElementById('van-ban-ket-qua');
+            vanBanKetQua.innerHTML = "Đang kết nối hệ thống...";
 
-            setTimeout(() => {
-                let textLower = noiDungText.toLowerCase();
-                let diemSo = 15;
-                let ketLuan = "NỘI DUNG AN TOÀN";
-                let phanTich = "Bài viết mang tính chia sẻ thông tin hoặc trung lập, không có dấu hiệu kích động hay cố ý bóp méo sự thật để câu tương tác.";
-                let bayTamLy = "Không phát hiện bẫy tâm lý hoặc thao túng cảm xúc đáng kể.";
-                let loiKhuyen = "Bạn có thể tiếp nhận thông tin này bình thường mà không cần lo lắng bị dắt mũi.";
+            let promptSystem = `Bạn là chuyên gia phân tích truyền thông xã hội. Hãy phân tích nội dung xem có phải Rage Bait (thao túng phẫn nộ) không. BẮT BUỘC TRẢ VỀ ĐÚNG FORMAT SAU (Tuyệt đối KHÔNG dùng dấu sao ** hay in đậm):
+ĐIỂM: [1 số từ 0 đến 100]
+KẾT LUẬN: [RAGE BAIT hoặc AN TOÀN]
+PHÂN TÍCH: [Phân tích thật chi tiết, cặn kẽ ý đồ của tác giả hoặc nội dung trong ảnh/video, giải thích rõ tại sao lại như vậy, viết dài sâu sắc ít nhất 3 đến 5 câu]
+BẪY TÂM LÝ: [Liệt kê và phân tích sâu các thủ thuật thao túng tâm lý được sử dụng, giải thích chi tiết cơ chế tác động lên người đọc, viết dài ít nhất 3 đến 5 câu]
+LỜI KHUYÊN: [Đưa ra chiến lược ứng phó cụ thể, giải thích lợi ích của việc làm theo lời khuyên, đưa ra các hành động cụ thể rõ ràng, viết dài ít nhất 3 đến 5 câu]`;
+            
+            let textToSend = promptSystem;
+            if (noiDungText !== "") {
+                textToSend += `\n\nNội dung văn bản đính kèm: "${noiDungText}"`;
+            }
+            if (base64Media !== "") {
+                textToSend += `\n\nHãy phân tích hình ảnh/khung hình video được đính kèm này.`;
+            }
 
-                // Từ khóa kích động / Rage bait mạnh
-                const tuKhoaDocHai = ["tức điên", "phẫn nộ", "khốn nạn", "sự thật kinh hoàng", "không thể tin nổi", "bọn họ", "chắc chắn", "tẩy chay", "chia sẻ ngay", "xấu hổ", "cạn lời", "mất dạy"];
-                let soTuTrung = tuKhoaDocHai.filter(keyword => textLower.includes(keyword)).length;
+            let messageContent = base64Media !== "" 
+                ? [
+                    { type: "text", text: textToSend },
+                    { type: "image_url", image_url: { url: base64Media } }
+                  ]
+                : textToSend;
 
-                if (soTuTrung >= 3 || textLower.includes("?") && textLower.includes("!")) {
-                    diemSo = 88;
-                    ketLuan = "CẢNH BÁO RAGE BAIT CAO ⚠";
-                    phanTich = "Nội dung sử dụng nhiều từ ngữ cường điệu, mang tính quy chụp và khơi gợi sự phẫn nộ tức thời nhằm mục đích câu tương tác (tương tác bẩn).";
-                    bayTamLy = "Hiệu ứng đám đông kết hợp với sự bất công giả tạo nhằm kích thích người dùng bấm chia sẻ khi đang nóng giận.";
-                    loiKhuyen = "Hãy dừng lại 5 giây, đừng vội bình luận hay chia sẻ. Đây là chiêu trò tạo phẫn nộ giả tạo để trục lợi tương tác.";
-                } else if (soTuTrung > 0 || base64Media !== "") {
-                    diemSo = 45;
-                    ketLuan = "CÓ DẤU HIỆU THAO TÚNG";
-                    phanTich = "Bài viết có sử dụng một vài từ ngữ định hướng cảm xúc nhưng ở mức độ nhẹ, cần xem xét thêm bối cảnh gốc trước khi kết luận.";
-                    bayTamLy = "Sử dụng tiêu đề giật gân hoặc hình ảnh gây chú ý một chiều.";
-                    loiKhuyen = "Nên đọc kỹ toàn bộ nội dung và tìm kiếm thêm nguồn đối chứng trước khi bày tỏ cảm xúc quá mạnh.";
+            try {
+                let modelsRes = await fetch("https://api.groq.com/openai/v1/models", {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${GROQ_API_KEY.trim()}` }
+                });
+                let modelsData = await modelsRes.json();
+                if (modelsData.error) throw new Error(modelsData.error.message);
+
+                let allAvailableModels = modelsData.data.map(m => m.id);
+                let validModels = [];
+
+                if (base64Media !== "") {
+                    let visionModels = allAvailableModels.filter(id => id.toLowerCase().includes("vision") || id.toLowerCase().includes("llava") || id.toLowerCase().includes("llama-3.2"));
+                    let textModels = allAvailableModels.filter(id => !id.toLowerCase().includes("guard") && !id.toLowerCase().includes("whisper") && !id.toLowerCase().includes("embed"));
+                    validModels = [...new Set([...visionModels, ...textModels])];
+                } else {
+                    validModels = allAvailableModels.filter(id => !id.toLowerCase().includes("guard") && !id.toLowerCase().includes("whisper") && !id.toLowerCase().includes("vision") && !id.toLowerCase().includes("embed"));
                 }
 
-                document.getElementById('so-diem').innerText = diemSo + "%";
-                document.getElementById('thanh-mau').style.width = diemSo + "%";
+                if (validModels.length === 0) throw new Error("Không tìm thấy model nào khả dụng trên tài khoản của bạn.");
 
+                let successData = null;
+                let usedModel = "";
+                let lastErrorMsg = "Lỗi không xác định.";
+
+                for (let i = 0; i < validModels.length; i++) {
+                    let currentModel = validModels[i];
+                    vanBanKetQua.innerHTML = `Đang thử nghiệm model (${i+1}/${validModels.length}): <b>${currentModel}</b>...`;
+                    
+                    try {
+                        let response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                            method: "POST",
+                            headers: {
+                                "Authorization": `Bearer ${GROQ_API_KEY.trim()}`,
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                model: currentModel,
+                                messages: [{ role: "user", content: messageContent }],
+                                temperature: 0.3,
+                                max_tokens: 1500
+                            })
+                        });
+
+                        let data = await response.json();
+                        if (!data.error) {
+                            successData = data;
+                            usedModel = currentModel;
+                            break; 
+                        } else {
+                            lastErrorMsg = data.error.message;
+                        }
+                    } catch (err) {
+                        lastErrorMsg = err.message;
+                    }
+                }
+
+                if (!successData) {
+                    throw new Error(lastErrorMsg);
+                }
+
+                let vanBanAI = successData.choices[0].message.content;
+                vanBanAI = vanBanAI.replace(/\*\*/g, ''); 
+
+                let timDiem = vanBanAI.match(/ĐIỂM.*?(\d+)/i);
+                let diemSo = timDiem ? parseInt(timDiem[1]) : 0;
+                if(diemSo > 100) diemSo = 100;
+                
+                let targetColor = "";
+                let targetBg = "";
                 if(diemSo > 65) {
                     document.getElementById('trang-thai').innerText = "CẢNH BÁO ĐỘC HẠI ⚠";
-                    document.getElementById('so-diem').style.color = "#f43f5e"; 
-                    document.getElementById('thanh-mau').style.background = "linear-gradient(90deg, #e11d48, #f43f5e)";
-                    document.getElementById('mascot-bubble').innerText = "Phát hiện Rage Bait! Qua Gương Chánh Niệm hít thở ngay đi bạn ơi 🚨";
+                    targetColor = "#f43f5e"; 
+                    targetBg = "linear-gradient(90deg, #e11d48, #f43f5e)";
                 } else if (diemSo > 30) {
                     document.getElementById('trang-thai').innerText = "CÓ DẤU HIỆU THAO TÚNG";
-                    document.getElementById('so-diem').style.color = "#f59e0b"; 
-                    document.getElementById('thanh-mau').style.background = "linear-gradient(90deg, #d97706, #f59e0b)";
+                    targetColor = "#f59e0b"; 
+                    targetBg = "linear-gradient(90deg, #d97706, #f59e0b)";
                 } else {
                     document.getElementById('trang-thai').innerText = "NỘI DUNG AN TOÀN";
-                    document.getElementById('so-diem').style.color = "#10b981"; 
-                    document.getElementById('thanh-mau').style.background = "linear-gradient(90deg, #059669, #10b981)";
+                    targetColor = "#10b981"; 
+                    targetBg = "linear-gradient(90deg, #059669, #10b981)";
                 }
 
-                let htmlKetQua = `
-                    <b style='color:#fbcfe8; font-size:18px;'>KẾT LUẬN:</b> ${ketLuan} <br>
-                    <span class="tu-khoa">🔍 Phân tích</span><br>${phanTich}<br>
-                    <span class="tu-khoa">🧠 Bẫy tâm lý</span><br>${bayTamLy}<br>
-                    <span class="tu-khoa">🛡️ Lời khuyên</span><br>${loiKhuyen}
-                `;
-                document.getElementById('van-ban-ket-qua').innerHTML = htmlKetQua;
+                soDiem.style.color = targetColor;
+                thanhMau.style.background = targetBg;
+                
+                setTimeout(() => {
+                    thanhMau.style.width = diemSo + "%";
+                    
+                    let currentScore = 0;
+                    let duration = 1200; 
+                    let intervalTime = 20; 
+                    let steps = duration / intervalTime;
+                    let increment = diemSo / steps;
+                    
+                    if (diemSo > 0) {
+                        let timer = setInterval(() => {
+                            currentScore += increment;
+                            if(currentScore >= diemSo) {
+                                currentScore = diemSo;
+                                clearInterval(timer);
+                            }
+                            soDiem.innerText = Math.floor(currentScore) + "%";
+                        }, intervalTime);
+                    }
+                }, 100);
 
-                document.getElementById('nut-quet').innerText = "Phân tích nội dung";
-                document.getElementById('nut-quet').disabled = false;
-            }, 600);
+                vanBanKetQua.innerHTML = `<span style="color:#10b981; font-size:12px; display:block; margin-bottom:15px;">(Đã phân tích qua model: ${usedModel})</span>` + 
+                    vanBanAI
+                    .replace(/ĐIỂM:.*\n/i, '')
+                    .replace(/KẾT LUẬN:(.*)/i, "<div class='ket-luan-highlight'><b style='color:#fbcfe8;'>KẾT LUẬN:</b><b style='color:#10b981;'>$1</b></div>")
+                    .replace(/PHÂN TÍCH:/i, '<div class="tu-khoa">PHÂN TÍCH AI</div>')
+                    .replace(/BẪY TÂM LÝ:/i, '<div class="tu-khoa">BẪY TÂM LÝ</div>')
+                    .replace(/LỜI KHUYÊN:/i, '<div class="tu-khoa">LỜI KHUYÊN</div>')
+                    .replace(/(\d+\.)\s/g, '<br><br><span style="color:#f472b6; font-weight:800; font-size:18px;">$1</span> ')
+                    .replace(/(\s|^)-\s/g, '<br><br><span style="color:#f472b6; font-weight:800; font-size:18px;">•</span> ')
+                    .replace(/\[|\]/g, ''); 
+
+            } catch (loi) {
+                vanBanKetQua.innerHTML = `<span style='color:#f43f5e;'>Lỗi API Groq: ${loi.message}</span>`;
+            }
+
+            document.getElementById('nut-quet').innerText = "Phân tích tự động";
+            document.getElementById('nut-quet').disabled = false;
         }
 
         let stream = null;
@@ -281,7 +408,7 @@
                     camBtn.style.borderColor = "#f43f5e"; 
                     camBtn.style.background = "rgba(244, 63, 94, 0.2)";
                 } catch (err) { 
-                    alert("Vui lòng cho phép truy cập Camera để dùng tính năng này!"); 
+                    alert("Vui lòng cho phép Camera!"); 
                 }
             }
         }
@@ -312,7 +439,7 @@
 
             isBreathing = true; 
             btn.innerText = "Dừng lại"; 
-            btn.style.background = "#4a294b";
+            btn.style.background = "linear-gradient(90deg, #db2777, #c026d3)";
             
             focusInterval = setInterval(() => {
                 if (stream && focusScore < 99) { 
