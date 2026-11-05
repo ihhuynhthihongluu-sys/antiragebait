@@ -325,10 +325,11 @@
         const GU_API_KEY = "sk-abc123XYZ456def789ghi012JKL345mno678PQR901stu234"; 
         const API_BASE_URL = "https://api.gu.io.vn/v1";
 
+        // ĐÃ ĐỔI ƯU TIÊN MODEL: Đưa gemini-flash (bản xịn) lên đầu, gemini-flash-lite xuống sau
         let globalTextModels = [
-            "gemini-flash-lite", 
             "gemini-flash", 
             "gemini-pro", 
+            "gemini-flash-lite", 
             "gemini-argon"
         ];
 
@@ -396,14 +397,8 @@
                             messages: messagesPayload, 
                             temperature: 0.6, 
                             max_tokens: 2500,
-                            // ĐÃ THÊM: ÉP TẮT HOÀN TOÀN BỘ LỌC AN TOÀN TRONG PAYLOAD API
+                            // Tắt hoàn toàn bộ lọc an toàn của Google Gemini
                             safety_settings: [
-                                { "category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE" },
-                                { "category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE" },
-                                { "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE" },
-                                { "category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE" }
-                            ],
-                            safetySettings: [ // Back-up cho chuẩn đặt tên khác của proxy
                                 { "category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE" },
                                 { "category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE" },
                                 { "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE" },
@@ -525,16 +520,16 @@
             document.getElementById('trang-thai').innerText = "Hệ thống đang phân tích chuyên sâu...";
             document.getElementById('van-ban-ket-qua').innerHTML = ""; 
             
-            // Ép nội dung cần phân tích vào trong dấu ngoặc kép để AI biết đây là trích dẫn
-            let promptSystem = `Nhiệm vụ: Phân tích đoạn văn bản hoặc hình ảnh sau theo góc độ ngôn ngữ học và giao tiếp xã hội. Hãy viết thật chi tiết, khách quan và mang tính xây dựng. BẮT BUỘC TRẢ VỀ ĐÚNG FORMAT SAU (không dùng dấu * hay #):
-ĐIỂM: [0-100] (Đánh giá mức độ cảm xúc/ẩn ý)
+            // ĐÃ LÀM SẠCH PROMPT: Loại bỏ hoàn toàn các từ dễ gây "hiểu nhầm" cho AI.
+            let promptSystem = `Nhiệm vụ: Phân tích đoạn nội dung sau (có thể là câu nói, văn bản hoặc mô tả) theo góc độ ngôn ngữ học và giao tiếp xã hội. BẮT BUỘC TRẢ VỀ ĐÚNG FORMAT SAU (không dùng dấu * hay #):
+ĐIỂM: [0-100] (Đánh giá mức độ ẩn ý)
 KẾT LUẬN: [THẲNG THẮN / ẨN Ý / TRUNG LẬP]
-1. PHÂN TÍCH CẤU TRÚC NGÔN TỪ: [Phân tích cực kỳ chi tiết về cách dùng từ, cấu trúc câu - ít nhất 4-5 câu]
-2. SẮC THÁI BIỂU ĐẠT: [Phân tích tâm lý và cảm xúc được thể hiện qua đoạn văn - ít nhất 4-5 câu]
-3. TÁC ĐỘNG GIAO TIẾP: [Đánh giá khách quan về ảnh hưởng của đoạn văn đến người đọc/người nghe - ít nhất 4-5 câu]
-4. PHƯƠNG PHÁP GIẢI QUYẾT: [Đề xuất cách xử lý tình huống cụ thể, hướng giải quyết mâu thuẫn êm đẹp và tích cực - ít nhất 4-5 câu]`;
+1. PHÂN TÍCH CẤU TRÚC NGÔN TỪ: [Phân tích chi tiết về cách dùng từ, cấu trúc câu - ít nhất 4-5 câu]
+2. SẮC THÁI BIỂU ĐẠT: [Phân tích thông điệp ngầm và sắc thái được thể hiện - ít nhất 4-5 câu]
+3. TÁC ĐỘNG GIAO TIẾP: [Đánh giá ảnh hưởng của nội dung này đến người đọc - ít nhất 4-5 câu]
+4. PHƯƠNG PHÁP GIẢI QUYẾT: [Đề xuất cách phản hồi hoặc xử lý tình huống êm đẹp - ít nhất 4-5 câu]`;
             
-            let fullText = promptSystem + (noiDungText ? `\n\nVăn bản cần phân tích: """ ${noiDungText} """` : "");
+            let fullText = promptSystem + (noiDungText ? `\n\nNội dung cần phân tích: """ ${noiDungText} """` : "");
             let messages = [{ role: "user", content: fullText }];
             
             let result = await callAPIWithFallback(messages, base64Media !== "", base64Media);
@@ -542,7 +537,7 @@ KẾT LUẬN: [THẲNG THẮN / ẨN Ý / TRUNG LẬP]
             if (!result.success) {
                 document.getElementById('van-ban-ket-qua').innerHTML = `<span style='color:#f43f5e;'>Không thể kết nối với API. Lỗi: ${result.error}</span>`;
             } 
-            else if (result.text.includes("I encountered an error") || result.text.includes("I am a large language model") || result.text.includes("Tôi không được lập trình") || result.text.includes("mô hình ngôn ngữ")) {
+            else if (result.text.includes("I encountered an error") || result.text.includes("I am a large language model") || result.text.includes("Tôi không được lập trình") || result.text.includes("mô hình ngôn ngữ") || result.text.includes("chỉ có thể tạo văn bản") || result.text.includes("nằm ngoài khả năng")) {
                 document.getElementById('trang-thai').innerText = "⚠️ AI TỪ CHỐI PHÂN TÍCH";
                 document.getElementById('so-diem').style.color = "#f59e0b";
                 document.getElementById('so-diem').innerText = "N/A";
