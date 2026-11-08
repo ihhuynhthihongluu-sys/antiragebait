@@ -284,7 +284,7 @@
                 <div class="section-header" style="margin-bottom: 5px;">
                     🧠 <span>GÓC SUY NGẪM KHÁCH QUAN</span>
                 </div>
-                <p style="margin: 0 0 0 32px; font-size: 13px; color: #c7d2fe;">Sổ tay NotebookLM giúp rèn luyện tư duy phản biện</p>
+                <p style="margin: 0 0 0 32px; font-size: 13px; color: #c7d2fe;">Socrates AI: Lắng nghe và đặt câu hỏi Socratic</p>
             </div>
             
             <!-- Vùng hiển thị khung chat -->
@@ -295,7 +295,7 @@
                 </div>
             </div>
             
-            <div class="typing-indicator" id="typing-indicator">Đang đồng bộ Sổ tay & Suy ngẫm...</div>
+            <div class="typing-indicator" id="typing-indicator">Socrates AI đang lắng nghe...</div>
             
             <div class="input-area-diary">
                 <textarea id="user-input-diary" class="text-input-diary" placeholder="Trút bầu tâm sự vào đây..."></textarea>
@@ -309,13 +309,21 @@
     </main>
 
     <!-- ==============================================
-         PHẦN XỬ LÝ LOGIC JAVASCRIPT THÔNG QUA API CHUẨN MỚI
+         PHẦN XỬ LÝ LOGIC JAVASCRIPT HỆ THỐNG LAI (HYBRID)
          ============================================== -->
     <script>
-        // CẤU HÌNH API VÀ SỔ TAY KIẾN THỨC GỐC ĐÃ CỐ ĐỊNH
+        // ------------------------------------------------
+        // 1. CẤU HÌNH API THẦY BẰNG (DÙNG CHO TAB CATCH)
+        // ------------------------------------------------
         const NL_API_KEY = "change-me-to-a-strong-secret-key"; 
         const NL_BASE_URL = "https://apilm.gu.io.vn";
-        const CORE_NOTEBOOK_ID = "3acf32c7-bd97-48d3-9bfa-8a87edd31abf"; // Sổ tay gốc chứa tài liệu nghiên cứu chuyên sâu
+        const CORE_NOTEBOOK_ID = "3acf32c7-bd97-48d3-9bfa-8a87edd31abf"; // Sổ tay gốc chứa tài liệu chuyên sâu
+
+        // ------------------------------------------------
+        // 2. CẤU HÌNH API GROQ (DÙNG CHO TAB CONSIDER)
+        // ------------------------------------------------
+        const GROQ_API_KEY = "THAY_KEY_GROQ_CUA_BAN_VAO_DAY"; // <-- ĐIỀN KEY GROQ CỦA BẠN VÀO ĐÂY
+        const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
         // ==============================================
         // HÀM UI: CHUYỂN TAB VÀ CAMERA
@@ -377,7 +385,7 @@
         }
 
         // ==============================================
-        // LOGIC TAB 1: CATCH - QUY TRÌNH SỬ DỤNG SỔ TAY GỐC
+        // LOGIC TAB 1: CATCH - SỬ DỤNG API NOTEBOOKLM
         // ==============================================
         let currentFile = null; 
         
@@ -421,7 +429,7 @@
             document.getElementById('van-ban-ket-qua').innerHTML = ""; 
             
             try {
-                let notebookId = CORE_NOTEBOOK_ID;
+                let notebookId = CORE_NOTEBOOK_ID; // Gắn ID sổ tay chuyên sâu
 
                 document.getElementById('trang-thai').innerText = "Đang đồng bộ dữ liệu vào Sổ tay Kiến thức...";
                 btn.innerText = "ĐANG TẢI LÊN...";
@@ -461,7 +469,7 @@ KẾT LUẬN: [GÂY TRANH CÃI / ẨN Ý / AN TOÀN]
                     body: JSON.stringify({ question: promptSystem })
                 });
                 
-                if (!chatRes.ok) throw new Error("Lỗi khi trò chuyện với AI");
+                if (!chatRes.ok) throw new Error("Lỗi khi trò chuyện với AI Thầy Bằng");
                 let chatData = await chatRes.json();
                 
                 let vanBanAI = chatData.answer.replace(/[*#]/g, ''); 
@@ -500,7 +508,7 @@ KẾT LUẬN: [GÂY TRANH CÃI / ẨN Ý / AN TOÀN]
         }
 
         // ==============================================
-        // LOGIC TAB 3: CONSIDER (NHẬT KÝ) DÙNG CHUNG SỔ TAY GỐC
+        // LOGIC TAB 3: CONSIDER - SỬ DỤNG LẠI API GROQ
         // ==============================================
         let recognition;
         let isRecording = false;
@@ -540,45 +548,51 @@ KẾT LUẬN: [GÂY TRANH CÃI / ẨN Ý / AN TOÀN]
 
             appendMessageDiary(text, "entry-student", "Bạn");
             
-            input.value = ""; input.disabled = true; document.getElementById("btn-send-diary").disabled = true;
+            input.value = ""; 
+            input.disabled = true; 
+            document.getElementById("btn-send-diary").disabled = true;
             
             let typingIndicator = document.getElementById("typing-indicator");
             typingIndicator.style.display = "block";
-            typingIndicator.innerText = "Socrates AI đang suy ngẫm cùng Sổ tay Gốc...";
+            typingIndicator.innerText = "Socrates AI đang lắng nghe...";
             
             try {
-                let diaryNotebookId = CORE_NOTEBOOK_ID;
+                // SỬ DỤNG CODE API GROQ GỐC
+                let promptSystem = `Bạn là một người bạn thông thái, chân thành áp dụng mô hình 5C và tư vấn tâm lý học đường. Dựa vào dòng tâm sự của tôi, hãy phản hồi theo nguyên tắc:
+1. Ghi nhận và đồng cảm ngắn gọn (1-2 câu).
+2. Đặt ĐÚNG MỘT câu hỏi mở Socratic để tôi tự đào sâu suy nghĩ.
+Tuyệt đối không phán xét, không đưa lời khuyên. Xưng hô "mình" và "bạn".`;
 
-                await fetch(`${NL_BASE_URL}/notebooks/${diaryNotebookId}/sources/text`, {
+                let response = await fetch(GROQ_URL, {
                     method: "POST",
-                    headers: { "x-api-key": NL_API_KEY, "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        title: `Tâm sự học sinh lúc ${new Date().toLocaleTimeString()}`, 
-                        content: text 
+                    headers: {
+                        "Authorization": `Bearer ${GROQ_API_KEY}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: "llama3-8b-8192", 
+                        messages: [
+                            { role: "system", content: promptSystem },
+                            { role: "user", content: text }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 500
                     })
                 });
-
-                let prompt = `Bạn là một người bạn thông thái, chân thành áp dụng mô hình 5C và tư vấn tâm lý học đường. Dựa vào tài liệu trong sổ tay và dòng tâm sự mới nhất của tôi, hãy phản hồi theo nguyên tắc:
-1. Ghi nhận và đồng cảm ngắn gọn (1-2 câu).
-2. Đặt ĐÚNG MỘT câu hỏi mở Socratic để tôi tự đào sâu suy nghĩ, nhận thức lại vấn đề (thuộc bước Consider).
-Tuyệt đối không phán xét. Xưng hô "mình" và "bạn".`;
-
-                let chatRes = await fetch(`${NL_BASE_URL}/notebooks/${diaryNotebookId}/chat`, {
-                    method: "POST",
-                    headers: { "x-api-key": NL_API_KEY, "Content-Type": "application/json" },
-                    body: JSON.stringify({ question: prompt })
-                });
                 
-                if (!chatRes.ok) throw new Error("Lỗi gọi API Trò chuyện.");
-                let chatData = await chatRes.json();
+                if (!response.ok) throw new Error("Lỗi kết nối API Groq.");
+                let data = await response.json();
                 
-                appendMessageDiary(chatData.answer, "entry-ai", "Socrates AI");
+                let answer = data.choices[0].message.content;
+                appendMessageDiary(answer, "entry-ai", "Socrates AI");
 
             } catch (err) {
                 appendMessageDiary(`Lỗi hệ thống: ${err.message}`, "entry-ai", "Hệ Thống");
             } finally {
                 typingIndicator.style.display = "none";
-                input.disabled = false; document.getElementById("btn-send-diary").disabled = false; input.focus();
+                input.disabled = false; 
+                document.getElementById("btn-send-diary").disabled = false; 
+                input.focus();
             }
         }
 
