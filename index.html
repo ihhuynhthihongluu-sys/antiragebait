@@ -284,7 +284,7 @@
                 <div class="section-header" style="margin-bottom: 5px;">
                     🧠 <span>GÓC SUY NGẪM KHÁCH QUAN</span>
                 </div>
-                <p style="margin: 0 0 0 32px; font-size: 13px; color: #c7d2fe;">Socrates AI: Lắng nghe và đặt câu hỏi Socratic</p>
+                <p style="margin: 0 0 0 32px; font-size: 13px; color: #c7d2fe;">Socrates AI: Lắng nghe và đặt câu hỏi gợi mở</p>
             </div>
             
             <!-- Vùng hiển thị khung chat -->
@@ -429,7 +429,7 @@
             document.getElementById('van-ban-ket-qua').innerHTML = ""; 
             
             try {
-                let notebookId = CORE_NOTEBOOK_ID; // Gắn ID sổ tay chuyên sâu
+                let notebookId = CORE_NOTEBOOK_ID; 
 
                 document.getElementById('trang-thai').innerText = "Đang đồng bộ dữ liệu vào Sổ tay Kiến thức...";
                 btn.innerText = "ĐANG TẢI LÊN...";
@@ -557,11 +557,14 @@ KẾT LUẬN: [GÂY TRANH CÃI / ẨN Ý / AN TOÀN]
             typingIndicator.innerText = "Socrates AI đang lắng nghe...";
             
             try {
-                // SỬ DỤNG CODE API GROQ GỐC
-                let promptSystem = `Bạn là một người bạn thông thái, chân thành áp dụng mô hình 5C và tư vấn tâm lý học đường. Dựa vào dòng tâm sự của tôi, hãy phản hồi theo nguyên tắc:
+                // SỬ DỤNG CODE API GROQ VỚI PROMPT ĐÃ ĐƯỢC TỐI ƯU SỰ TỰ NHIÊN
+                let promptSystem = `Bạn là một người bạn thông thái, lắng nghe chân thành. Dựa vào dòng tâm sự của tôi, hãy phản hồi theo đúng 2 nguyên tắc sau:
 1. Ghi nhận và đồng cảm ngắn gọn (1-2 câu).
-2. Đặt ĐÚNG MỘT câu hỏi mở Socratic để tôi tự đào sâu suy nghĩ.
-Tuyệt đối không phán xét, không đưa lời khuyên. Xưng hô "mình" và "bạn".`;
+2. Đặt ĐÚNG MỘT câu hỏi mở (Socratic) để tôi tự suy ngẫm, tự tìm ra vấn đề của mình.
+LƯU Ý TỐI QUAN TRỌNG: 
+- Tuyệt đối không phán xét, không đưa ra lời khuyên hay dạy đời. 
+- TUYỆT ĐỐI KHÔNG nhắc đến các từ khóa học thuật như "mô hình 5C", "bước consider", "dừng lại xem xét", "bước tiếp theo"... Hãy giao tiếp thật tự nhiên, đời thường. 
+- Luôn xưng hô là "mình" và gọi tôi là "bạn".`;
 
                 let response = await fetch(GROQ_URL, {
                     method: "POST",
