@@ -126,7 +126,7 @@
         button.btn-main:disabled { background: #4a294b; color: #a58ca7; cursor: not-allowed; transform: none; box-shadow: none; }
 
         /* =========================================
-           6. CATCH - TAB RAGE BAIT
+           6. CATCH - TAB PHÂN TÍCH RAGEBAIT
            ========================================= */
         .text-input-rb { width: 100%; height: 120px; padding: 15px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(244, 114, 182, 0.2); border-radius: 8px; color: #fff; font-size: 16px; margin-bottom: 15px; resize: vertical; box-sizing: border-box; }
         .text-input-rb:focus { outline: none; border-color: #f472b6; }
@@ -298,7 +298,7 @@
             <div class="diary-box" id="diary-box">
                 <div class="entry entry-ai">
                     <div class="label-chat">Socrates AI</div>
-                    <div class="content">Mình ở đây để lắng nghe. Bạn đang cảm thấy thế nào? Chuyện gì vừa xảy ra vậy? Hãy kể cho mình nghe nhé.</div>
+                    <div class="content">Đã hiểu. Mình ở đây để lắng nghe và đồng hành cùng bạn. Bạn đang gặp phải chuyện gì? Hãy kể cho mình nghe nhé.</div>
                 </div>
             </div>
             
@@ -397,7 +397,7 @@
                         body: JSON.stringify({ 
                             model: currentModel, 
                             messages: messagesPayload, 
-                            temperature: 0.4, 
+                            temperature: 0.6, // Tăng nhẹ độ sáng tạo để phân tích sâu hơn
                             max_tokens: 1000 
                         })
                     });
@@ -620,14 +620,15 @@ KẾT LUẬN: [GÂY TRANH CÃI / ẨN Ý / AN TOÀN]
         // TAB 3 (CONSIDER): LOGIC CŨ CHO NHẬT KÝ AI
         // ==============================================
         
+        // ĐÃ NÂNG CẤP PROMPT ĐỂ AI PHÂN TÍCH SÂU SẮC HƠN
         let chatHistory = [
             { 
                 role: "user", 
-                content: "Bạn là một trợ lý AI giúp rèn luyện tư duy phản biện. Nguyên tắc: Khi tôi nhập một câu chuyện, bạn chỉ được phép đặt đúng 1 câu hỏi mở ngắn gọn để tôi tự suy nghĩ thêm về vấn đề. Tuyệt đối không đưa ra lời khuyên, không nhận xét, không đóng vai chuyên gia tư vấn. Trả lời 'Đã hiểu' nếu bạn đồng ý." 
+                content: "Bạn là Socrates AI, một người bạn thông thái và sâu sắc. Khi tôi tâm sự, hãy giúp tôi rèn luyện tư duy phản biện theo hướng sau: 1. Đưa ra một góc nhìn khách quan, phân tích sâu sắc về tâm lý và nguyên nhân gốc rễ của vấn đề tôi đang gặp phải. 2. Đặt ra ĐÚNG 1 CÂU HỎI MỞ mang tính gợi mở mạnh mẽ để tôi tự tháo gỡ vướng mắc. Tuyệt đối không đưa ra lời khuyên trực tiếp hay phán xét. Giao tiếp tự nhiên, gần gũi, xưng 'mình' và gọi 'bạn'. Trả lời 'Đã hiểu' nếu bạn đồng ý." 
             },
             { 
                 role: "assistant", 
-                content: "Mình ở đây để lắng nghe. Bạn đang gặp phải chuyện gì? Hãy kể cho mình nghe nhé." 
+                content: "Đã hiểu. Mình ở đây để lắng nghe và đồng hành cùng bạn. Bạn đang gặp phải chuyện gì? Hãy kể cho mình nghe nhé." 
             }
         ];
         
