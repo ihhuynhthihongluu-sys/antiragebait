@@ -126,7 +126,7 @@
         button.btn-main:disabled { background: #4a294b; color: #a58ca7; cursor: not-allowed; transform: none; box-shadow: none; }
 
         /* =========================================
-           6. CATCH - TAB PHÂN TÍCH
+           6. CATCH - TAB RAGE BAIT
            ========================================= */
         .text-input-rb { width: 100%; height: 120px; padding: 15px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(244, 114, 182, 0.2); border-radius: 8px; color: #fff; font-size: 16px; margin-bottom: 15px; resize: vertical; box-sizing: border-box; }
         .text-input-rb:focus { outline: none; border-color: #f472b6; }
@@ -195,6 +195,7 @@
 </head>
 <body>
 
+    <!-- Đồ họa nền -->
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
 
@@ -219,12 +220,14 @@
     <!-- VÙNG HIỂN THỊ NỘI DUNG TỪNG TAB -->
     <main class="main-container">
         
-        <!-- TAB 1: CATCH - PHÂN TÍCH RAGEBAIT -->
+        <!-- ==============================================
+             TAB 1: CATCH - PHÂN TÍCH RAGEBAIT (NOTEBOOKLM)
+             ============================================== -->
         <div id="tab-radar" class="khung-chinh active">
             <div class="section-header">
-                📝 <span>PHÂN TÍCH CẤU TRÚC NGÔN TỪ</span>
+                📝 <span>PHÂN TÍCH CHUYÊN SÂU</span>
             </div>
-            <p class="chu-thich">NotebookLM: Bóc tách cấu trúc văn bản, hình ảnh, video chuyên sâu</p>
+            <p class="chu-thich">Bóc tách cấu trúc bẫy tâm lý qua văn bản, hình ảnh, video</p>
             
             <textarea id="o-nhap-lieu-rb" class="text-input-rb" placeholder="Dán nội dung cần phân tích vào đây..."></textarea>
             
@@ -254,12 +257,14 @@
             </div>
         </div>
 
-        <!-- TAB 2: CALM - BÀI TẬP THỞ -->
+        <!-- ==============================================
+             TAB 2: CALM - BÀI TẬP THỞ
+             ============================================== -->
         <div id="tab-breathe" class="khung-chinh">
             <div class="section-header">
                 🧘‍♀️ <span>GƯƠNG CHÁNH NIỆM</span>
             </div>
-            <p class="chu-thich">Kiểm soát nhịp thở, làm dịu cảm xúc tức thời</p>
+            <p class="chu-thich">Kiểm soát nhịp thở, làm dịu cơn giận tức thời</p>
             
             <div class="breathe-container">
                 <video id="webcam-feed" autoplay playsinline muted></video>
@@ -278,24 +283,26 @@
             </div>
         </div>
 
-        <!-- TAB 3: CONSIDER - NHẬT KÝ AI PHẢN BIỆN -->
+        <!-- ==============================================
+             TAB 3: CONSIDER - NHẬT KÝ AI PHẢN BIỆN (API GU GỐC)
+             ============================================== -->
         <div id="tab-suyngam" class="khung-chinh">
             <div class="diary-header">
                 <div class="section-header" style="margin-bottom: 5px;">
                     🧠 <span>GÓC SUY NGẪM KHÁCH QUAN</span>
                 </div>
-                <p style="margin: 0 0 0 32px; font-size: 13px; color: #c7d2fe;">Socrates AI: Lắng nghe và đặt câu hỏi gợi mở</p>
+                <p style="margin: 0 0 0 32px; font-size: 13px; color: #c7d2fe;">Trợ lý AI giúp rèn luyện tư duy phản biện</p>
             </div>
             
             <!-- Vùng hiển thị khung chat -->
             <div class="diary-box" id="diary-box">
                 <div class="entry entry-ai">
                     <div class="label-chat">Socrates AI</div>
-                    <div class="content">Mình ở đây để lắng nghe. Bạn đang gặp phải chuyện gì? Hãy kể cho mình nghe nhé.</div>
+                    <div class="content">Mình ở đây để lắng nghe. Bạn đang cảm thấy thế nào? Chuyện gì vừa xảy ra vậy? Hãy kể cho mình nghe nhé.</div>
                 </div>
             </div>
             
-            <div class="typing-indicator" id="typing-indicator">Socrates AI đang lắng nghe...</div>
+            <div class="typing-indicator" id="typing-indicator">Người phản biện đang suy ngẫm sâu...</div>
             
             <div class="input-area-diary">
                 <textarea id="user-input-diary" class="text-input-diary" placeholder="Trút bầu tâm sự vào đây..."></textarea>
@@ -309,32 +316,130 @@
     </main>
 
     <!-- ==============================================
-         PHẦN XỬ LÝ LOGIC JAVASCRIPT HỆ THỐNG LAI (HYBRID)
+         PHẦN XỬ LÝ LOGIC JAVASCRIPT
          ============================================== -->
     <script>
         // ------------------------------------------------
-        // 1. CẤU HÌNH API THẦY BẰNG (DÙNG CHO TAB CATCH)
+        // 1. CẤU HÌNH API NOTEBOOKLM (DÀNH CHO TAB CATCH)
         // ------------------------------------------------
         const NL_API_KEY = "change-me-to-a-strong-secret-key"; 
         const NL_BASE_URL = "https://apilm.gu.io.vn";
-        const CORE_NOTEBOOK_ID = "3acf32c7-bd97-48d3-9bfa-8a87edd31abf"; // Sổ tay gốc chứa tài liệu chuyên sâu
+        const CORE_NOTEBOOK_ID = "3acf32c7-bd97-48d3-9bfa-8a87edd31abf"; 
 
         // ------------------------------------------------
-        // 2. CẤU HÌNH API GROQ (DÙNG CHO TAB CONSIDER)
+        // 2. CẤU HÌNH API GU GỐC (DÀNH CHO TAB CONSIDER)
         // ------------------------------------------------
-        const GROQ_API_KEY = "THAY_KEY_GROQ_CUA_BAN_VAO_DAY"; // <-- ĐIỀN KEY GROQ CỦA BẠN VÀO ĐÂY
-        const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+        const GU_API_KEY = "sk-abc123XYZ456def789ghi012JKL345mno678PQR901stu234"; 
+        const GU_BASE_URL = "https://api.gu.io.vn/v1";
+
+        let globalTextModels = [
+            "gemini-flash-lite", 
+            "gemini-flash", 
+            "gemini-pro", 
+            "gemini-argon"
+        ];
+
+        // Lấy danh sách mô hình từ Server GU
+        async function fetchModels() {
+            try {
+                let res = await fetch(`${GU_BASE_URL}/models`, { 
+                    method: "GET", 
+                    headers: { "Authorization": `Bearer ${GU_API_KEY}` } 
+                });
+                
+                let data = await res.json();
+                
+                if (!data.error && data.data) {
+                    let fetched = data.data.map(model => model.id);
+                    if (fetched.length > 0) {
+                        globalTextModels = [...new Set([...globalTextModels, ...fetched])];
+                    }
+                }
+            } catch (error) { 
+                console.error("Lỗi khi tải danh sách model:", error); 
+            }
+        }
+        
+        fetchModels();
+
+        // Hàm gọi API Fallback đa mô hình cho Tab Consider
+        async function callAPIWithFallback(messagesList, isVision = false, base64Img = null) {
+            let modelsToTry = isVision ? ["gemini-flash", "gemini-pro"] : globalTextModels;
+            let lastError = "";
+
+            for (let i = 0; i < modelsToTry.length; i++) {
+                let currentModel = modelsToTry[i];
+                
+                try {
+                    let messagesPayload = messagesList;
+                    
+                    if (isVision && base64Img) {
+                        messagesPayload = messagesList.map((msg, index) => {
+                            if (index === messagesList.length - 1) {
+                                return { 
+                                    role: msg.role, 
+                                    content: [
+                                        { type: "text", text: msg.content }, 
+                                        { type: "image_url", image_url: { url: base64Img } }
+                                    ] 
+                                };
+                            }
+                            return msg;
+                        });
+                    }
+
+                    let response = await fetch(`${GU_BASE_URL}/chat/completions`, {
+                        method: "POST",
+                        headers: { 
+                            "Authorization": `Bearer ${GU_API_KEY}`, 
+                            "Content-Type": "application/json" 
+                        },
+                        body: JSON.stringify({ 
+                            model: currentModel, 
+                            messages: messagesPayload, 
+                            temperature: 0.4, 
+                            max_tokens: 1000 
+                        })
+                    });
+
+                    let data = await response.json();
+                    
+                    if (!data.error && data.choices && data.choices.length > 0) {
+                        return { 
+                            success: true, 
+                            text: data.choices[0].message.content, 
+                            model: currentModel 
+                        };
+                    } else {
+                        lastError = data.error ? data.error.message : "Lỗi phản hồi từ server";
+                    }
+                    
+                } catch (err) { 
+                    lastError = err.message; 
+                }
+            }
+            return { success: false, error: lastError };
+        }
 
         // ==============================================
         // HÀM UI: CHUYỂN TAB VÀ CAMERA
         // ==============================================
         function switchTab(tabId, btnElement, isFlex) {
-            document.querySelectorAll('.khung-chinh').forEach(el => { el.classList.remove('active'); el.classList.remove('flex-tab'); });
-            document.querySelectorAll('.tab-btn').forEach(el => { el.classList.remove('active'); });
+            document.querySelectorAll('.khung-chinh').forEach(el => { 
+                el.classList.remove('active'); 
+                el.classList.remove('flex-tab'); 
+            });
+            
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active');
+            });
             
             let target = document.getElementById(tabId);
             target.classList.add('active');
-            if (isFlex) target.classList.add('flex-tab');
+            
+            if (isFlex) {
+                target.classList.add('flex-tab');
+            }
             btnElement.classList.add('active');
         }
 
@@ -344,7 +449,8 @@
         
         async function toggleCamera() {
             if (stream) {
-                stream.getTracks().forEach(t => t.stop()); stream = null;
+                stream.getTracks().forEach(t => t.stop()); 
+                stream = null;
                 document.getElementById('webcam-feed').style.opacity = '0';
                 document.getElementById('webcam-overlay').style.display = 'none'; 
                 document.getElementById('btn-cam').innerText = "📷 Bật Gương WebCam"; 
@@ -371,7 +477,9 @@
                 text.innerText = "SẴN SÀNG CHƯA?"; btn.innerText = "Bắt đầu bài tập thở"; 
                 return;
             }
+            
             isBreathing = true; btn.innerText = "Dừng lại"; 
+            
             function breatheCycle() {
                 text.innerText = "HÍT VÀO TỪ TỪ..."; text.style.color = "#34d399";
                 outer.classList.add('expand'); inner.classList.add('expand');
@@ -380,12 +488,13 @@
                     outer.classList.remove('expand'); inner.classList.remove('expand');
                 }, 4000); 
             }
+            
             breatheCycle(); 
             breatheInterval = setInterval(breatheCycle, 8000);
         }
 
         // ==============================================
-        // LOGIC TAB 1: CATCH - SỬ DỤNG API NOTEBOOKLM
+        // TAB 1 (CATCH): XỬ LÝ ẢNH/VIDEO VÀ NOTEBOOKLM
         // ==============================================
         let currentFile = null; 
         
@@ -429,7 +538,7 @@
             document.getElementById('van-ban-ket-qua').innerHTML = ""; 
             
             try {
-                let notebookId = CORE_NOTEBOOK_ID; 
+                let notebookId = CORE_NOTEBOOK_ID;
 
                 document.getElementById('trang-thai').innerText = "Đang đồng bộ dữ liệu vào Sổ tay Kiến thức...";
                 btn.innerText = "ĐANG TẢI LÊN...";
@@ -508,25 +617,40 @@ KẾT LUẬN: [GÂY TRANH CÃI / ẨN Ý / AN TOÀN]
         }
 
         // ==============================================
-        // LOGIC TAB 3: CONSIDER - SỬ DỤNG LẠI API GROQ
+        // TAB 3 (CONSIDER): LOGIC CŨ CHO NHẬT KÝ AI
         // ==============================================
+        
+        let chatHistory = [
+            { 
+                role: "user", 
+                content: "Bạn là một trợ lý AI giúp rèn luyện tư duy phản biện. Nguyên tắc: Khi tôi nhập một câu chuyện, bạn chỉ được phép đặt đúng 1 câu hỏi mở ngắn gọn để tôi tự suy nghĩ thêm về vấn đề. Tuyệt đối không đưa ra lời khuyên, không nhận xét, không đóng vai chuyên gia tư vấn. Trả lời 'Đã hiểu' nếu bạn đồng ý." 
+            },
+            { 
+                role: "assistant", 
+                content: "Mình ở đây để lắng nghe. Bạn đang gặp phải chuyện gì? Hãy kể cho mình nghe nhé." 
+            }
+        ];
+        
         let recognition;
         let isRecording = false;
         
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
             recognition.lang = 'vi-VN'; recognition.continuous = false; recognition.interimResults = true;
+            
             recognition.onresult = function(event) {
                 let finalTranscript = '';
                 for (let i = event.resultIndex; i < event.results.length; ++i) {
                     if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript;
                 }
+                
                 if (finalTranscript !== '') {
                     let currentVal = document.getElementById("user-input-diary").value;
                     let space = currentVal ? " " : "";
                     document.getElementById("user-input-diary").value = currentVal + space + finalTranscript;
                 }
             };
+            
             recognition.onend = function() { 
                 isRecording = false; 
                 document.getElementById("btn-mic").classList.remove("recording"); 
@@ -534,7 +658,7 @@ KẾT LUẬN: [GÂY TRANH CÃI / ẨN Ý / AN TOÀN]
         }
 
         function toggleMic() {
-            if (!recognition) return alert("Trình duyệt không hỗ trợ thu âm.");
+            if (!recognition) return alert("Trình duyệt của bạn không hỗ trợ thu âm.");
             if (isRecording) { recognition.stop(); } 
             else { recognition.start(); isRecording = true; document.getElementById("btn-mic").classList.add("recording"); }
         }
@@ -548,60 +672,35 @@ KẾT LUẬN: [GÂY TRANH CÃI / ẨN Ý / AN TOÀN]
 
             appendMessageDiary(text, "entry-student", "Bạn");
             
-            input.value = ""; 
-            input.disabled = true; 
-            document.getElementById("btn-send-diary").disabled = true;
+            input.value = ""; input.disabled = true; document.getElementById("btn-send-diary").disabled = true;
+            document.getElementById("typing-indicator").style.display = "block";
             
-            let typingIndicator = document.getElementById("typing-indicator");
-            typingIndicator.style.display = "block";
-            typingIndicator.innerText = "Socrates AI đang lắng nghe...";
+            chatHistory.push({ role: "user", content: text });
             
-            try {
-                // SỬ DỤNG CODE API GROQ VỚI PROMPT ĐÃ ĐƯỢC TỐI ƯU SỰ TỰ NHIÊN
-                let promptSystem = `Bạn là một người bạn thông thái, lắng nghe chân thành. Dựa vào dòng tâm sự của tôi, hãy phản hồi theo đúng 2 nguyên tắc sau:
-1. Ghi nhận và đồng cảm ngắn gọn (1-2 câu).
-2. Đặt ĐÚNG MỘT câu hỏi mở (Socratic) để tôi tự suy ngẫm, tự tìm ra vấn đề của mình.
-LƯU Ý TỐI QUAN TRỌNG: 
-- Tuyệt đối không phán xét, không đưa ra lời khuyên hay dạy đời. 
-- TUYỆT ĐỐI KHÔNG nhắc đến các từ khóa học thuật như "mô hình 5C", "bước consider", "dừng lại xem xét", "bước tiếp theo"... Hãy giao tiếp thật tự nhiên, đời thường. 
-- Luôn xưng hô là "mình" và gọi tôi là "bạn".`;
+            // Sử dụng logic API đa mô hình (GU API) của bạn
+            let result = await callAPIWithFallback(chatHistory);
 
-                let response = await fetch(GROQ_URL, {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${GROQ_API_KEY}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        model: "llama3-8b-8192", 
-                        messages: [
-                            { role: "system", content: promptSystem },
-                            { role: "user", content: text }
-                        ],
-                        temperature: 0.7,
-                        max_tokens: 500
-                    })
-                });
-                
-                if (!response.ok) throw new Error("Lỗi kết nối API Groq.");
-                let data = await response.json();
-                
-                let answer = data.choices[0].message.content;
-                appendMessageDiary(answer, "entry-ai", "Socrates AI");
-
-            } catch (err) {
-                appendMessageDiary(`Lỗi hệ thống: ${err.message}`, "entry-ai", "Hệ Thống");
-            } finally {
-                typingIndicator.style.display = "none";
-                input.disabled = false; 
-                document.getElementById("btn-send-diary").disabled = false; 
-                input.focus();
+            if (!result.success) {
+                appendMessageDiary("Lỗi kết nối AI. Vui lòng thử lại sau.", "entry-ai", "Hệ Thống"); 
+                chatHistory.pop(); 
+            } 
+            else if (result.text.includes("Tôi không được lập trình") || result.text.includes("I encountered") || result.text.includes("mô hình ngôn ngữ")) {
+                appendMessageDiary("Hệ thống AI từ chối trả lời do bộ lọc an toàn của Google đã được kích hoạt. Hãy thử dùng những từ ngữ nhẹ nhàng hơn nhé.", "entry-ai", "Hệ Thống (Cảnh Báo)");
+                chatHistory.pop(); 
+            } 
+            else {
+                chatHistory.push({ role: "assistant", content: result.text });
+                appendMessageDiary(result.text, "entry-ai", `Socrates AI (${result.model})`);
             }
+
+            document.getElementById("typing-indicator").style.display = "none";
+            input.disabled = false; document.getElementById("btn-send-diary").disabled = false; input.focus();
         }
 
         function appendMessageDiary(text, className, labelName) {
             let box = document.getElementById("diary-box");
             let div = document.createElement("div"); div.className = `entry ${className}`;
+            
             let cleanText = text.replace(/\n/g, "<br>").replace(/[*#]/g, "");
             div.innerHTML = `<div class="label-chat">${labelName}</div><div class="content">${cleanText}</div>`;
             box.appendChild(div); box.scrollTop = box.scrollHeight;
