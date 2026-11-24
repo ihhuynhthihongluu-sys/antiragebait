@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZenNet 5C - Hệ Sinh Thái Lá Chắn Cảm Xúc Số</title>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Thư viện đọc chữ từ ảnh (OCR) chạy trực tiếp trên trình duyệt -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #17153B 0%, #2E1437 50%, #43183A 100%);
@@ -551,7 +553,7 @@
                         <button type="button" class="btn-upload-media" onclick="document.getElementById('media-input').click()">
                             <span>🖼️</span> Tải Ảnh/Video
                         </button>
-                        <span id="file-name-label" class="file-name-label">Chưa chọn tệp đính kèm (Hỗ trợ ảnh chụp màn hình bài đăng, video ngắn)</span>
+                        <span id="file-name-label" class="file-name-label">Chưa chọn tệp đính kèm (Tự động nhận diện chữ tiếng Việt từ ảnh chụp màn hình)</span>
                     </div>
                     <div id="media-preview" class="media-preview">
                         <button type="button" class="btn-remove-media" onclick="clearMedia()">✕</button>
@@ -629,7 +631,6 @@
         const GU_API_URL = "https://api.gu.io.vn/v1/chat/completions";
         const GU_API_KEY = "sk-abc123XYZ456def789ghi012JKL345mno678PQR901stu234";
 
-        // Danh sách model chuyên xử lý văn bản
         const TEXT_MODELS = [
             "gemini-2.5-flash",
             "gpt-4o-mini",
@@ -637,15 +638,7 @@
             "llama-3.3-70b-versatile"
         ];
 
-        // Danh sách model hỗ trợ đọc hình ảnh (Vision)
-        const VISION_MODELS = [
-            "gemini-2.5-flash",
-            "gpt-4o-mini",
-            "gpt-4o",
-            "claude-3-5-sonnet"
-        ];
-
-        let selectedImageBase64 = null;
+        let selectedFile = null;
         let selectedMediaType = null;
 
         function switchTab(tabName, btn) {
@@ -656,66 +649,25 @@
         }
 
         // ==========================================
-        // NÉN ẢNH TỰ ĐỘNG ĐỂ TRÁNH LỖI QUÁ TẢI API
-        // ==========================================
-        function compressImage(file, maxWidth = 1024, quality = 0.78) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = event => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-
-                        if (width > maxWidth) {
-                            height = Math.round((height * maxWidth) / width);
-                            width = maxWidth;
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-
-                        // Xuất ra định dạng JPEG siêu nhẹ
-                        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-                        resolve(compressedDataUrl);
-                    };
-                    img.onerror = err => reject(err);
-                };
-                reader.onerror = err => reject(err);
-            });
-        }
-
-        // ==========================================
         // XỬ LÝ TẢI ẢNH / VIDEO (TAB CATCH)
         // ==========================================
-        async function handleMediaSelect(event) {
+        function handleMediaSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
 
+            selectedFile = file;
             const label = document.getElementById('file-name-label');
             const previewBox = document.getElementById('media-preview');
             const previewContent = document.getElementById('preview-content');
 
             if (file.type.startsWith('image/')) {
                 selectedMediaType = 'image';
-                label.innerText = `Đang tối ưu ảnh: ${file.name}...`;
-                try {
-                    selectedImageBase64 = await compressImage(file, 1024, 0.78);
-                    previewBox.style.display = 'block';
-                    previewContent.innerHTML = `<img src="${selectedImageBase64}" alt="Preview">`;
-                    label.innerText = `Đã sẵn sàng: ${file.name}`;
-                } catch (err) {
-                    alert("Không thể đọc file ảnh này, bạn thử chọn ảnh khác nhé!");
-                    clearMedia();
-                }
+                const imgUrl = URL.createObjectURL(file);
+                previewBox.style.display = 'block';
+                previewContent.innerHTML = `<img src="${imgUrl}" alt="Preview">`;
+                label.innerText = `Đã chọn ảnh: ${file.name} (Sẵn sàng quét nội dung)`;
             } else if (file.type.startsWith('video/')) {
                 selectedMediaType = 'video';
-                selectedImageBase64 = null;
                 const videoUrl = URL.createObjectURL(file);
                 previewBox.style.display = 'block';
                 previewContent.innerHTML = `<video src="${videoUrl}" controls></video>`;
@@ -725,18 +677,35 @@
 
         function clearMedia() {
             document.getElementById('media-input').value = '';
-            document.getElementById('file-name-label').innerText = 'Chưa chọn tệp đính kèm (Hỗ trợ ảnh chụp màn hình bài đăng, video ngắn)';
+            document.getElementById('file-name-label').innerText = 'Chưa chọn tệp đính kèm (Tự động nhận diện chữ tiếng Việt từ ảnh chụp màn hình)';
             document.getElementById('media-preview').style.display = 'none';
             document.getElementById('preview-content').innerHTML = '';
-            selectedImageBase64 = null;
+            selectedFile = null;
             selectedMediaType = null;
         }
 
         // ==========================================
-        // PHÂN TÍCH CHUYÊN SÂU (VISION + NOTEBOOKLM)
+        // TRÍCH XUẤT CHỮ TỪ ẢNH BẰNG TESSERACT OCR
+        // ==========================================
+        async function extractTextFromImage(file, onProgress) {
+            const worker = await Tesseract.createWorker('vie+eng', 1, {
+                logger: m => {
+                    if (m.status === 'recognizing text' && onProgress) {
+                        onProgress(Math.round(m.progress * 100));
+                    }
+                }
+            });
+            const { data: { text } } = await worker.recognize(file);
+            await worker.terminate();
+            return text.trim();
+        }
+
+        // ==========================================
+        // PHÂN TÍCH CHUYÊN SÂU (OCR + NOTEBOOKLM)
         // ==========================================
         async function runDeepAnalysis() {
-            const textVal = document.getElementById('catch-text').value.trim();
+            const textInputEl = document.getElementById('catch-text');
+            let textVal = textInputEl.value.trim();
             const outputEl = document.getElementById('catch-output');
             const btn = document.getElementById('btn-analyze');
 
@@ -746,69 +715,62 @@
             }
 
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> <span>ĐANG BÓC TÁCH BẪY TÂM LÝ...</span>';
             outputEl.classList.add('show');
-            outputEl.innerText = "⏳ Đang đọc dữ liệu và phân tích dấu hiệu thao túng cảm xúc...";
 
             try {
-                // TRƯỜNG HỢP 1: CÓ ĐÍNH KÈM HÌNH ẢNH
-                if (selectedMediaType === 'image' && selectedImageBase64) {
-                    // Bước 1: Dùng Vision AI trích xuất nội dung chữ & bối cảnh từ ảnh
-                    const extractPrompt = `Hãy đọc toàn bộ nội dung chữ xuất hiện trong bức ảnh chụp màn hình mạng xã hội này và mô tả ngắn gọn bối cảnh hình ảnh (nếu có biểu cảm công kích, bình luận tiêu cực hoặc tiêu đề giật gân). Chỉ trả về nội dung trích xuất khách quan.`;
-                    
-                    const extractedInfo = await callGuApiWithFallback([
-                        {
-                            role: "user",
-                            content: [
-                                { type: "text", text: extractPrompt },
-                                { type: "image_url", image_url: { url: selectedImageBase64 } }
-                            ]
-                        }
-                    ], VISION_MODELS);
+                let extractedFromImg = "";
 
-                    // Bước 2: Gửi nội dung vừa đọc được từ ảnh sang Sổ tay NotebookLM để phân tích chuyên sâu
-                    const combinedContext = `${textVal ? `Ghi chú của học sinh: "${textVal}"\n` : ''}Nội dung trích xuất từ hình ảnh đính kèm:\n"${extractedInfo}"`;
-                    
-                    try {
-                        const lmReply = await queryNotebookLM(combinedContext);
-                        outputEl.innerText = cleanMarkdown(lmReply);
-                    } catch (lmErr) {
-                        // Nếu NotebookLM bận, dùng trực tiếp Vision AI phân tích luôn
-                        const directVisionReply = await callGuApiWithFallback([
-                            {
-                                role: "user",
-                                content: [
-                                    {
-                                        type: "text",
-                                        text: `Bạn là chuyên gia tâm lý học đường phân tích bẫy phẫn nộ (Rage Bait) và công kích mạng. Hãy phân tích bức ảnh này ${textVal ? `kèm chia sẻ: "${textVal}"` : ''} theo 4 mục ngắn gọn, sắc bén:\n1. 🚨 MỨC ĐỘ RỦI RO RAGE BAIT\n2. 🧠 CẤU TRÚC THAO TÚNG TÂM LÝ\n3. ⚠️ HỆ LỤY KHI PHẢN ỨNG BỐC ĐỒNG\n4. 💡 ĐỊNH HƯỚNG XỬ LÝ`
-                                    },
-                                    { type: "image_url", image_url: { url: selectedImageBase64 } }
-                                ]
-                            }
-                        ], VISION_MODELS);
-                        outputEl.innerText = cleanMarkdown(directVisionReply);
+                // Nếu có tải ảnh lên -> quét chữ tiếng Việt từ ảnh trực tiếp trên trình duyệt
+                if (selectedMediaType === 'image' && selectedFile) {
+                    btn.innerHTML = '<span class="spinner"></span> <span>ĐANG ĐỌC CHỮ TỪ HÌNH ẢNH...</span>';
+                    outputEl.innerText = "🔍 Đang quét và nhận diện văn bản tiếng Việt trong ảnh (0%)...";
+
+                    extractedFromImg = await extractTextFromImage(selectedFile, (pct) => {
+                        outputEl.innerText = `🔍 Đang quét và nhận diện văn bản tiếng Việt trong ảnh (${pct}%)...`;
+                    });
+
+                    if (!extractedFromImg && !textVal) {
+                        outputEl.innerText = "⚠️ Bức ảnh này không có chữ rõ ràng để đọc (hoặc chữ quá mờ). Bạn hãy nhập thêm vài dòng mô tả nội dung bức ảnh vào khung phía trên rồi bấm phân tích nhé!";
+                        return;
                     }
-                    return;
                 }
 
-                // TRƯỜNG HỢP 2: CHỈ CÓ VĂN BẢN (HOẶC VIDEO KÈM MÔ TẢ)
-                const contentToAnalyze = textVal || "Người dùng tải lên một video có dấu hiệu tranh cãi, kích động cảm xúc trên mạng xã hội.";
-                const lmReply = await queryNotebookLM(contentToAnalyze);
-                outputEl.innerText = cleanMarkdown(lmReply);
+                btn.innerHTML = '<span class="spinner"></span> <span>ĐANG BÓC TÁCH BẪY TÂM LÝ...</span>';
+                outputEl.innerText = "⏳ Đang đối chiếu dữ liệu nghiên cứu trong Sổ tay để phân tích cấu trúc thao túng cảm xúc...";
+
+                // Gộp nội dung người dùng gõ + nội dung đọc được từ ảnh
+                let finalContent = "";
+                if (textVal && extractedFromImg) {
+                    finalContent = `Ghi chú người dùng: "${textVal}"\nNội dung trích xuất từ ảnh chụp màn hình: "${extractedFromImg}"`;
+                } else if (extractedFromImg) {
+                    finalContent = `Nội dung trích xuất từ ảnh chụp màn hình mạng xã hội:\n"${extractedFromImg}"`;
+                } else if (textVal) {
+                    finalContent = textVal;
+                } else {
+                    finalContent = "Người dùng tải lên một video có dấu hiệu tranh cãi, kích động cảm xúc trên mạng xã hội.";
+                }
+
+                // Gửi văn bản đã chuẩn hóa sang NotebookLM
+                const lmReply = await queryNotebookLM(finalContent);
+                
+                // Hiển thị kèm đoạn chữ đọc được từ ảnh (nếu có) để người dùng đối chiếu
+                const prefix = extractedFromImg ? `📄 Nội dung quét được từ ảnh:\n"${extractedFromImg}"\n\n────────────────────────\n\n` : "";
+                outputEl.innerText = prefix + cleanMarkdown(lmReply);
 
             } catch (err) {
-                console.warn("Chuyển sang cơ chế phân tích dự phòng:", err);
+                console.warn("Chuyển sang cơ chế phân tích dự phòng GU API:", err);
                 try {
+                    const fallbackContent = textVal || "Nội dung bài đăng gây tranh cãi, kích động cảm xúc trên mạng xã hội";
                     const fallbackReply = await callGuApiWithFallback([
                         {
                             role: "system",
                             content: "Bạn là chuyên gia tâm lý hành vi phân tích nội dung Rage Bait và bắt nạt trực tuyến ở học sinh THPT. Trả lời sắc bén, dễ hiểu theo 4 mục: 1. Mức độ rủi ro, 2. Cấu trúc thao túng tâm lý, 3. Hệ lụy nếu bốc đồng, 4. Định hướng xử lý."
                         },
-                        { role: "user", content: `Phân tích nội dung sau: "${textVal || 'Nội dung kích động trên mạng xã hội'}"` }
-                    ], TEXT_MODELS);
+                        { role: "user", content: `Phân tích nội dung sau: "${fallbackContent}"` }
+                    ]);
                     outputEl.innerText = cleanMarkdown(fallbackReply);
                 } catch (e) {
-                    outputEl.innerText = "⚠️ Máy chủ phân tích ảnh/văn bản đang quá tải. Bạn thử lại sau vài giây hoặc dán kèm nội dung chữ vào ô phía trên nhé!";
+                    outputEl.innerText = "⚠️ Máy chủ đang bận xử lý. Bạn hãy đợi 5 giây rồi bấm Phân Tích lại nhé!";
                 }
             } finally {
                 btn.disabled = false;
@@ -953,7 +915,7 @@ Quy tắc bắt buộc:
             box.scrollTop = box.scrollHeight;
 
             try {
-                const reply = await callGuApiWithFallback(socratesHistory, TEXT_MODELS);
+                const reply = await callGuApiWithFallback(socratesHistory);
                 document.getElementById(waitId).remove();
                 const cleaned = cleanMarkdown(reply);
                 appendChat('ai', cleaned);
@@ -976,11 +938,8 @@ Quy tắc bắt buộc:
             box.scrollTop = box.scrollHeight;
         }
 
-        // ==========================================
-        // HÀM GỌI GU API KÈM FALLBACK ĐA MODEL
-        // ==========================================
-        async function callGuApiWithFallback(messages, modelList = TEXT_MODELS) {
-            for (const model of modelList) {
+        async function callGuApiWithFallback(messages) {
+            for (const model of TEXT_MODELS) {
                 try {
                     const res = await fetch(GU_API_URL, {
                         method: "POST",
