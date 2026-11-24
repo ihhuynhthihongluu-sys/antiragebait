@@ -35,7 +35,6 @@
             flex-direction: column;
         }
 
-        /* Top Bar */
         .top-header {
             background: var(--header-bg);
             padding: 14px 28px;
@@ -96,7 +95,6 @@
             cursor: pointer;
         }
 
-        /* Navigation Bar */
         .nav-tabs {
             background: var(--nav-bg);
             padding: 0 28px;
@@ -140,7 +138,6 @@
             box-shadow: 0 0 10px var(--pink-neon);
         }
 
-        /* Main Container */
         .container {
             width: 100%;
             max-width: 960px;
@@ -172,7 +169,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Section Title */
         .section-title {
             display: flex;
             align-items: center;
@@ -190,7 +186,6 @@
             margin-bottom: 22px;
         }
 
-        /* Catch Inputs */
         .input-textarea {
             width: 100%;
             background: var(--input-bg);
@@ -211,7 +206,6 @@
             box-shadow: 0 0 0 3px rgba(255, 46, 147, 0.18);
         }
 
-        /* Media Upload Box */
         .media-upload-box {
             margin-top: 16px;
             background: var(--input-bg);
@@ -257,7 +251,7 @@
 
         .media-preview {
             display: none;
-            max-width: 260px;
+            max-width: 280px;
             border-radius: 10px;
             overflow: hidden;
             border: 1px solid var(--border-subtle);
@@ -273,17 +267,16 @@
             position: absolute;
             top: 6px;
             right: 6px;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.75);
             color: white;
             border: none;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
 
-        /* Primary CTA Button */
         .btn-analyze {
             width: 100%;
             margin-top: 20px;
@@ -315,7 +308,6 @@
             cursor: not-allowed;
         }
 
-        /* Analysis Output */
         .analysis-result {
             margin-top: 24px;
             background: rgba(18, 10, 28, 0.85);
@@ -323,7 +315,7 @@
             border-radius: 12px;
             padding: 20px;
             display: none;
-            line-height: 1.7;
+            line-height: 1.75;
             font-size: 0.95rem;
             color: #F3E8F5;
             white-space: pre-line;
@@ -333,7 +325,7 @@
             display: block;
         }
 
-        /* TAB 2: CALM (WEBCAM + BREATHING) */
+        /* TAB 2: CALM */
         .calm-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -437,7 +429,7 @@
             border-color: var(--pink-neon);
         }
 
-        /* TAB 3: CONSIDER (SOCRATES CHAT) */
+        /* TAB 3: CONSIDER */
         .chat-box {
             height: 360px;
             overflow-y: auto;
@@ -527,7 +519,6 @@
 </head>
 <body>
 
-    <!-- HEADER -->
     <header class="top-header">
         <div class="brand">
             <div class="bot-avatar">🤖</div>
@@ -536,18 +527,16 @@
         <div class="user-profile-icon" title="Học sinh THPT">👤</div>
     </header>
 
-    <!-- NAVIGATION TABS -->
     <nav class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('catch', this)">CATCH (PHÂN TÍCH)</button>
         <button class="tab-btn" onclick="switchTab('calm', this)">CALM (LÀM DỊU)</button>
         <button class="tab-btn" onclick="switchTab('consider', this)">CONSIDER (SUY NGẪM)</button>
     </nav>
 
-    <!-- MAIN CONTENT -->
     <main class="container">
         <div class="panel-card">
 
-            <!-- TAB 1: CATCH (PHÂN TÍCH CHUYÊN SÂU) -->
+            <!-- TAB 1: CATCH -->
             <section id="tab-catch" class="tab-section active">
                 <div class="section-title">
                     <span>📋</span> PHÂN TÍCH CHUYÊN SÂU
@@ -577,7 +566,7 @@
                 <div id="catch-output" class="analysis-result"></div>
             </section>
 
-            <!-- TAB 2: CALM (LÀM DỊU + WEBCAM + NHỊP THỞ) -->
+            <!-- TAB 2: CALM -->
             <section id="tab-calm" class="tab-section">
                 <div class="section-title">
                     <span>🌿</span> KHÔNG GIAN LÀM DỊU TÂM TRÍ
@@ -609,7 +598,7 @@
                 </div>
             </section>
 
-            <!-- TAB 3: CONSIDER (SOCRATES AI) -->
+            <!-- TAB 3: CONSIDER -->
             <section id="tab-consider" class="tab-section">
                 <div class="section-title">
                     <span>💭</span> ĐỐI THOẠI CÙNG SOCRATES AI
@@ -639,19 +628,26 @@
 
         const GU_API_URL = "https://api.gu.io.vn/v1/chat/completions";
         const GU_API_KEY = "sk-abc123XYZ456def789ghi012JKL345mno678PQR901stu234";
-        const FALLBACK_MODELS = [
+
+        // Danh sách model chuyên xử lý văn bản
+        const TEXT_MODELS = [
             "gemini-2.5-flash",
             "gpt-4o-mini",
             "claude-3-5-sonnet",
             "llama-3.3-70b-versatile"
         ];
 
+        // Danh sách model hỗ trợ đọc hình ảnh (Vision)
+        const VISION_MODELS = [
+            "gemini-2.5-flash",
+            "gpt-4o-mini",
+            "gpt-4o",
+            "claude-3-5-sonnet"
+        ];
+
         let selectedImageBase64 = null;
         let selectedMediaType = null;
 
-        // ==========================================
-        // CHUYỂN ĐỔI TAB
-        // ==========================================
         function switchTab(tabName, btn) {
             document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -660,30 +656,70 @@
         }
 
         // ==========================================
+        // NÉN ẢNH TỰ ĐỘNG ĐỂ TRÁNH LỖI QUÁ TẢI API
+        // ==========================================
+        function compressImage(file, maxWidth = 1024, quality = 0.78) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = event => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Xuất ra định dạng JPEG siêu nhẹ
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve(compressedDataUrl);
+                    };
+                    img.onerror = err => reject(err);
+                };
+                reader.onerror = err => reject(err);
+            });
+        }
+
+        // ==========================================
         // XỬ LÝ TẢI ẢNH / VIDEO (TAB CATCH)
         // ==========================================
-        function handleMediaSelect(event) {
+        async function handleMediaSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            document.getElementById('file-name-label').innerText = file.name;
+            const label = document.getElementById('file-name-label');
             const previewBox = document.getElementById('media-preview');
             const previewContent = document.getElementById('preview-content');
-            previewBox.style.display = 'block';
 
             if (file.type.startsWith('image/')) {
                 selectedMediaType = 'image';
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    selectedImageBase64 = e.target.result;
-                    previewContent.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-                };
-                reader.readAsDataURL(file);
+                label.innerText = `Đang tối ưu ảnh: ${file.name}...`;
+                try {
+                    selectedImageBase64 = await compressImage(file, 1024, 0.78);
+                    previewBox.style.display = 'block';
+                    previewContent.innerHTML = `<img src="${selectedImageBase64}" alt="Preview">`;
+                    label.innerText = `Đã sẵn sàng: ${file.name}`;
+                } catch (err) {
+                    alert("Không thể đọc file ảnh này, bạn thử chọn ảnh khác nhé!");
+                    clearMedia();
+                }
             } else if (file.type.startsWith('video/')) {
                 selectedMediaType = 'video';
                 selectedImageBase64 = null;
                 const videoUrl = URL.createObjectURL(file);
+                previewBox.style.display = 'block';
                 previewContent.innerHTML = `<video src="${videoUrl}" controls></video>`;
+                label.innerText = `Đã chọn video: ${file.name}`;
             }
         }
 
@@ -697,7 +733,7 @@
         }
 
         // ==========================================
-        // PHÂN TÍCH CHUYÊN SÂU (NOTEBOOKLM + VISION)
+        // PHÂN TÍCH CHUYÊN SÂU (VISION + NOTEBOOKLM)
         // ==========================================
         async function runDeepAnalysis() {
             const textVal = document.getElementById('catch-text').value.trim();
@@ -712,34 +748,77 @@
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner"></span> <span>ĐANG BÓC TÁCH BẪY TÂM LÝ...</span>';
             outputEl.classList.add('show');
-            outputEl.innerText = "⏳ Đang đối chiếu dữ liệu nghiên cứu hành vi và cấu trúc ngôn từ kích động...";
+            outputEl.innerText = "⏳ Đang đọc dữ liệu và phân tích dấu hiệu thao túng cảm xúc...";
 
             try {
-                // Nếu người dùng tải lên hình ảnh, ưu tiên dùng Vision AI trích xuất & phân tích ảnh trước
+                // TRƯỜNG HỢP 1: CÓ ĐÍNH KÈM HÌNH ẢNH
                 if (selectedMediaType === 'image' && selectedImageBase64) {
-                    const visionPrompt = `Bạn là chuyên gia phân tích tâm lý học đường của hệ thống ZenNet 5C. Hãy quan sát bức ảnh chụp màn hình mạng xã hội này ${textVal ? `kèm mô tả: "${textVal}"` : ''} và bóc tách chuyên sâu cấu trúc bẫy tâm lý (Rage Bait / công kích mạng) theo 4 phần rõ ràng:
-1. 🚨 MỨC ĐỘ RỦI RO & DẤU HIỆU NHẬN DIỆN: Đánh giá mức độ độc hại/kích động.
-2. 🧠 THỦ THUẬT THAO TÚNG TÂM LÝ: Chỉ ra cách bài đăng đánh vào lòng tự ái, tâm lý đám đông hoặc sự phẫn nộ.
-3. ⚠️ HỆ LỤY NẾU PHẢN ỨNG BỐC ĐỒNG: Điều gì xảy ra nếu học sinh vội vã bình luận đáp trả hoặc chia sẻ.
-4. 💡 KHUYẾN NGHỊ HÀNH ĐỘNG: Gợi ý cách giữ bình tĩnh và bảo vệ bản thân.`;
-
-                    const reply = await callGuApiWithFallback([
+                    // Bước 1: Dùng Vision AI trích xuất nội dung chữ & bối cảnh từ ảnh
+                    const extractPrompt = `Hãy đọc toàn bộ nội dung chữ xuất hiện trong bức ảnh chụp màn hình mạng xã hội này và mô tả ngắn gọn bối cảnh hình ảnh (nếu có biểu cảm công kích, bình luận tiêu cực hoặc tiêu đề giật gân). Chỉ trả về nội dung trích xuất khách quan.`;
+                    
+                    const extractedInfo = await callGuApiWithFallback([
                         {
                             role: "user",
                             content: [
-                                { type: "text", text: visionPrompt },
+                                { type: "text", text: extractPrompt },
                                 { type: "image_url", image_url: { url: selectedImageBase64 } }
                             ]
                         }
-                    ]);
-                    outputEl.innerText = cleanMarkdown(reply);
+                    ], VISION_MODELS);
+
+                    // Bước 2: Gửi nội dung vừa đọc được từ ảnh sang Sổ tay NotebookLM để phân tích chuyên sâu
+                    const combinedContext = `${textVal ? `Ghi chú của học sinh: "${textVal}"\n` : ''}Nội dung trích xuất từ hình ảnh đính kèm:\n"${extractedInfo}"`;
+                    
+                    try {
+                        const lmReply = await queryNotebookLM(combinedContext);
+                        outputEl.innerText = cleanMarkdown(lmReply);
+                    } catch (lmErr) {
+                        // Nếu NotebookLM bận, dùng trực tiếp Vision AI phân tích luôn
+                        const directVisionReply = await callGuApiWithFallback([
+                            {
+                                role: "user",
+                                content: [
+                                    {
+                                        type: "text",
+                                        text: `Bạn là chuyên gia tâm lý học đường phân tích bẫy phẫn nộ (Rage Bait) và công kích mạng. Hãy phân tích bức ảnh này ${textVal ? `kèm chia sẻ: "${textVal}"` : ''} theo 4 mục ngắn gọn, sắc bén:\n1. 🚨 MỨC ĐỘ RỦI RO RAGE BAIT\n2. 🧠 CẤU TRÚC THAO TÚNG TÂM LÝ\n3. ⚠️ HỆ LỤY KHI PHẢN ỨNG BỐC ĐỒNG\n4. 💡 ĐỊNH HƯỚNG XỬ LÝ`
+                                    },
+                                    { type: "image_url", image_url: { url: selectedImageBase64 } }
+                                ]
+                            }
+                        ], VISION_MODELS);
+                        outputEl.innerText = cleanMarkdown(directVisionReply);
+                    }
                     return;
                 }
 
-                // Nếu là văn bản (hoặc video kèm mô tả), gọi trực tiếp Sổ tay NotebookLM CORE_NOTEBOOK_ID
-                const contentToAnalyze = textVal || "Người dùng đã tải lên một video có dấu hiệu tranh cãi, kích động cảm xúc trên mạng xã hội.";
-                const lmPrompt = `Dựa trên cơ sở dữ liệu nghiên cứu về Rage Bait (bẫy phẫn nộ) và bạo lực học đường trên không gian mạng trong sổ tay, hãy phân tích chuyên sâu nội dung sau:
-"${contentToAnalyze}"
+                // TRƯỜNG HỢP 2: CHỈ CÓ VĂN BẢN (HOẶC VIDEO KÈM MÔ TẢ)
+                const contentToAnalyze = textVal || "Người dùng tải lên một video có dấu hiệu tranh cãi, kích động cảm xúc trên mạng xã hội.";
+                const lmReply = await queryNotebookLM(contentToAnalyze);
+                outputEl.innerText = cleanMarkdown(lmReply);
+
+            } catch (err) {
+                console.warn("Chuyển sang cơ chế phân tích dự phòng:", err);
+                try {
+                    const fallbackReply = await callGuApiWithFallback([
+                        {
+                            role: "system",
+                            content: "Bạn là chuyên gia tâm lý hành vi phân tích nội dung Rage Bait và bắt nạt trực tuyến ở học sinh THPT. Trả lời sắc bén, dễ hiểu theo 4 mục: 1. Mức độ rủi ro, 2. Cấu trúc thao túng tâm lý, 3. Hệ lụy nếu bốc đồng, 4. Định hướng xử lý."
+                        },
+                        { role: "user", content: `Phân tích nội dung sau: "${textVal || 'Nội dung kích động trên mạng xã hội'}"` }
+                    ], TEXT_MODELS);
+                    outputEl.innerText = cleanMarkdown(fallbackReply);
+                } catch (e) {
+                    outputEl.innerText = "⚠️ Máy chủ phân tích ảnh/văn bản đang quá tải. Bạn thử lại sau vài giây hoặc dán kèm nội dung chữ vào ô phía trên nhé!";
+                }
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>PHÂN TÍCH CHUYÊN SÂU TỰ ĐỘNG</span>';
+            }
+        }
+
+        async function queryNotebookLM(content) {
+            const lmPrompt = `Dựa trên cơ sở dữ liệu nghiên cứu về Rage Bait (bẫy phẫn nộ) và bạo lực học đường trên không gian mạng trong sổ tay, hãy phân tích chuyên sâu nội dung sau:
+${content}
 
 Trình bày súc tích, sắc bén theo đúng 4 mục:
 1. 🚨 MỨC ĐỘ RỦI RO RAGE BAIT: (Thấp / Trung bình / Cao - kèm lý do).
@@ -747,39 +826,18 @@ Trình bày súc tích, sắc bén theo đúng 4 mục:
 3. ⚠️ HỆ LỤY KHI PHẢN ỨNG BỐC ĐỒNG: (Rủi ro leo thang mâu thuẫn trên mạng và ngoài đời thực).
 4. 💡 ĐỊNH HƯỚNG XỬ LÝ: (Gợi ý chuyển sang tab CALM để điều hòa cảm xúc hoặc tab CONSIDER để suy ngẫm).`;
 
-                const response = await fetch(`${LM_API_BASE}/notebooks/${CORE_NOTEBOOK_ID}/chat`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "x-api-key": LM_API_KEY
-                    },
-                    body: JSON.stringify({ message: lmPrompt })
-                });
+            const response = await fetch(`${LM_API_BASE}/notebooks/${CORE_NOTEBOOK_ID}/chat`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-api-key": LM_API_KEY
+                },
+                body: JSON.stringify({ message: lmPrompt })
+            });
 
-                if (!response.ok) throw new Error("NotebookLM HTTP " + response.status);
-
-                const data = await response.json();
-                const reply = data.answer || data.response || data.message || (data.data && data.data.answer);
-                outputEl.innerText = cleanMarkdown(reply);
-
-            } catch (err) {
-                console.warn("Chuyển sang cơ chế phân tích dự phòng GU API:", err);
-                try {
-                    const fallbackReply = await callGuApiWithFallback([
-                        {
-                            role: "system",
-                            content: "Bạn là chuyên gia tâm lý hành vi phân tích nội dung Rage Bait và bắt nạt trực tuyến ở học sinh THPT. Trả lời sắc bén, dễ hiểu theo 4 mục: 1. Mức độ rủi ro, 2. Cấu trúc thao túng tâm lý, 3. Hệ lụy nếu bốc đồng, 4. Định hướng xử lý."
-                        },
-                        { role: "user", content: `Phân tích nội dung sau: "${textVal || 'Video nội dung kích động mạng xã hội'}"` }
-                    ]);
-                    outputEl.innerText = cleanMarkdown(fallbackReply);
-                } catch (e) {
-                    outputEl.innerText = "⚠️ Hệ thống phân tích đang bận. Bạn hãy thử lại sau vài giây nhé!";
-                }
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<span>PHÂN TÍCH CHUYÊN SÂU TỰ ĐỘNG</span>';
-            }
+            if (!response.ok) throw new Error("NotebookLM HTTP " + response.status);
+            const data = await response.json();
+            return data.answer || data.response || data.message || (data.data && data.data.answer);
         }
 
         // ==========================================
@@ -895,7 +953,7 @@ Quy tắc bắt buộc:
             box.scrollTop = box.scrollHeight;
 
             try {
-                const reply = await callGuApiWithFallback(socratesHistory);
+                const reply = await callGuApiWithFallback(socratesHistory, TEXT_MODELS);
                 document.getElementById(waitId).remove();
                 const cleaned = cleanMarkdown(reply);
                 appendChat('ai', cleaned);
@@ -921,8 +979,8 @@ Quy tắc bắt buộc:
         // ==========================================
         // HÀM GỌI GU API KÈM FALLBACK ĐA MODEL
         // ==========================================
-        async function callGuApiWithFallback(messages) {
-            for (const model of FALLBACK_MODELS) {
+        async function callGuApiWithFallback(messages, modelList = TEXT_MODELS) {
+            for (const model of modelList) {
                 try {
                     const res = await fetch(GU_API_URL, {
                         method: "POST",
@@ -934,7 +992,7 @@ Quy tắc bắt buộc:
                             model: model,
                             messages: messages,
                             temperature: 0.7,
-                            max_tokens: 700
+                            max_tokens: 750
                         })
                     });
 
