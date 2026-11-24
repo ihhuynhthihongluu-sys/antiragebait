@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZenNet 5C - Hệ Sinh Thái Lá Chắn Cảm Xúc Số</title>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Thư viện đọc chữ từ ảnh (OCR) chạy trực tiếp trên trình duyệt -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
         :root {
@@ -312,13 +311,13 @@
 
         .analysis-result {
             margin-top: 24px;
-            background: rgba(18, 10, 28, 0.85);
+            background: rgba(18, 10, 28, 0.9);
             border-left: 4px solid var(--pink-neon);
             border-radius: 12px;
-            padding: 20px;
+            padding: 22px;
             display: none;
-            line-height: 1.75;
-            font-size: 0.95rem;
+            line-height: 1.8;
+            font-size: 0.96rem;
             color: #F3E8F5;
             white-space: pre-line;
         }
@@ -446,11 +445,11 @@
         }
 
         .chat-msg {
-            max-width: 80%;
+            max-width: 82%;
             padding: 13px 17px;
             border-radius: 16px;
-            font-size: 0.94rem;
-            line-height: 1.6;
+            font-size: 0.95rem;
+            line-height: 1.65;
             white-space: pre-line;
         }
 
@@ -622,21 +621,11 @@
 
     <script>
         // ==========================================
-        // CẤU HÌNH API HỆ THỐNG LAI (HYBRID)
+        // CẤU HÌNH API NOTEBOOKLM (CHUẨN SWAGGER)
         // ==========================================
         const LM_API_BASE = "https://apilm.gu.io.vn";
         const LM_API_KEY = "change-me-to-a-strong-secret-key";
         const CORE_NOTEBOOK_ID = "6173358b-7449-4b1f-ba58-94178239f49a";
-
-        const GU_API_URL = "https://api.gu.io.vn/v1/chat/completions";
-        const GU_API_KEY = "sk-abc123XYZ456def789ghi012JKL345mno678PQR901stu234";
-
-        const TEXT_MODELS = [
-            "gemini-2.5-flash",
-            "gpt-4o-mini",
-            "claude-3-5-sonnet",
-            "llama-3.3-70b-versatile"
-        ];
 
         let selectedFile = null;
         let selectedMediaType = null;
@@ -701,7 +690,30 @@
         }
 
         // ==========================================
-        // PHÂN TÍCH CHUYÊN SÂU (OCR + NOTEBOOKLM)
+        // HÀM GỌI NOTEBOOKLM API VỚI KEY "question"
+        // ==========================================
+        async function askNotebookLM(questionText) {
+            const response = await fetch(`${LM_API_BASE}/notebooks/${CORE_NOTEBOOK_ID}/chat`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-api-key": LM_API_KEY
+                },
+                body: JSON.stringify({
+                    question: questionText
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.answer || data.response || data.message || data.result || (data.data && data.data.answer) || JSON.stringify(data);
+        }
+
+        // ==========================================
+        // TAB 1: PHÂN TÍCH CHUYÊN SÂU (PROMPT NÂNG CAO)
         // ==========================================
         async function runDeepAnalysis() {
             const textInputEl = document.getElementById('catch-text');
@@ -720,7 +732,6 @@
             try {
                 let extractedFromImg = "";
 
-                // Nếu có tải ảnh lên -> quét chữ tiếng Việt từ ảnh trực tiếp trên trình duyệt
                 if (selectedMediaType === 'image' && selectedFile) {
                     btn.innerHTML = '<span class="spinner"></span> <span>ĐANG ĐỌC CHỮ TỪ HÌNH ẢNH...</span>';
                     outputEl.innerText = "🔍 Đang quét và nhận diện văn bản tiếng Việt trong ảnh (0%)...";
@@ -735,71 +746,53 @@
                     }
                 }
 
-                btn.innerHTML = '<span class="spinner"></span> <span>ĐANG BÓC TÁCH BẪY TÂM LÝ...</span>';
-                outputEl.innerText = "⏳ Đang đối chiếu dữ liệu nghiên cứu trong Sổ tay để phân tích cấu trúc thao túng cảm xúc...";
+                btn.innerHTML = '<span class="spinner"></span> <span>ĐANG GIẢI MÃ BẪY TÂM LÝ...</span>';
+                outputEl.innerText = "⏳ Đang đối chiếu cơ sở dữ liệu nghiên cứu hành vi và phân tích cơ chế thao túng cảm xúc...";
 
-                // Gộp nội dung người dùng gõ + nội dung đọc được từ ảnh
                 let finalContent = "";
                 if (textVal && extractedFromImg) {
-                    finalContent = `Ghi chú người dùng: "${textVal}"\nNội dung trích xuất từ ảnh chụp màn hình: "${extractedFromImg}"`;
+                    finalContent = `Bối cảnh học sinh chia sẻ: "${textVal}"\nNội dung trích xuất từ ảnh chụp màn hình: "${extractedFromImg}"`;
                 } else if (extractedFromImg) {
                     finalContent = `Nội dung trích xuất từ ảnh chụp màn hình mạng xã hội:\n"${extractedFromImg}"`;
                 } else if (textVal) {
                     finalContent = textVal;
                 } else {
-                    finalContent = "Người dùng tải lên một video có dấu hiệu tranh cãi, kích động cảm xúc trên mạng xã hội.";
+                    finalContent = "Video ngắn có dấu hiệu gây tranh cãi, công kích hoặc kích động cảm xúc trên mạng xã hội.";
                 }
 
-                // Gửi văn bản đã chuẩn hóa sang NotebookLM
-                const lmReply = await queryNotebookLM(finalContent);
-                
-                // Hiển thị kèm đoạn chữ đọc được từ ảnh (nếu có) để người dùng đối chiếu
+                const lmPrompt = `Bạn là chuyên gia phân tích tâm lý học hành vi và an toàn không gian mạng của hệ thống ZenNet 5C. Dựa trên kho tài liệu nghiên cứu về hiện tượng "Rage Bait" (bẫy phẫn nộ), cơ chế điều hòa cảm xúc và phòng chống bạo lực học đường trong sổ tay, hãy giải mã chuyên sâu nội dung sau:
+
+"""
+${finalContent}
+"""
+
+Yêu cầu phân tích sắc sảo, thấu cảm, chỉ thẳng vào bản chất tâm lý và trình bày mạch lạc theo đúng 4 phần sau (tuyệt đối không dùng dấu sao ** hay ký tự thừa):
+
+1. 🚨 CHỈ SỐ RỦI RO & BẢN CHẤT NỘI DUNG
+Đánh giá mức độ nguy hiểm (Thấp / Trung bình / Cao / Báo động) và gọi tên chính xác dạng độc hại của nội dung này (ví dụ: bẫy phẫn nộ câu tương tác, công kích cá nhân ẩn danh, bôi nhọ danh dự, kích động tâm lý bầy đàn...).
+
+2. 🧠 GIẢI MÃ THỦ THUẬT THAO TÚNG TÂM LÝ
+Trích dẫn trực tiếp những từ ngữ hoặc chi tiết "gài bẫy" trong nội dung trên. Giải thích rõ người đăng đang đánh vào điểm yếu tâm lý nào (lòng tự ái, nỗi sợ bị cô lập, sự phẫn nộ trước bất công, hay hiệu ứng đám đông) để kích hoạt phản ứng nóng giận tức thì (khiến não bộ mất kiểm soát lý trí).
+
+3. ⚠️ KỊCH BẢN LEO THANG NẾU "SẬP BẪY"
+Chỉ rõ cái giá phải trả nếu nạn nhân hoặc người xem vội vàng bình luận thanh minh, đôi co tay đôi hoặc chia sẻ trong cơn giận (từ việc vô tình đẩy bài viết lên xu hướng, bị cắt ghép lời nói, cho đến nguy cơ mâu thuẫn bùng phát thành bạo lực ngoài đời thực).
+
+4. 💡 CHIẾN THUẬT PHẢN ỨNG BẢN LĨNH (5C)
+Đưa ra lời khuyên thực tế, tỉnh táo ngay lúc này:
+- Bước 1 (CALM): Tạm rời màn hình 60 giây, chuyển sang tab CALM hít thở sâu để cắt đứt cơn sóng cảm xúc.
+- Bước 2 (CONSIDER): Chuyển sang tab CONSIDER trò chuyện cùng Socrates AI để tách bạch đâu là sự thật, đâu là sự khiêu khích, và chọn cách xử lý khôn ngoan nhất (chụp bằng chứng, báo cáo vi phạm hoặc im lặng để thuật toán tự dập tắt bài đăng).`;
+
+                const lmReply = await askNotebookLM(lmPrompt);
                 const prefix = extractedFromImg ? `📄 Nội dung quét được từ ảnh:\n"${extractedFromImg}"\n\n────────────────────────\n\n` : "";
                 outputEl.innerText = prefix + cleanMarkdown(lmReply);
 
             } catch (err) {
-                console.warn("Chuyển sang cơ chế phân tích dự phòng GU API:", err);
-                try {
-                    const fallbackContent = textVal || "Nội dung bài đăng gây tranh cãi, kích động cảm xúc trên mạng xã hội";
-                    const fallbackReply = await callGuApiWithFallback([
-                        {
-                            role: "system",
-                            content: "Bạn là chuyên gia tâm lý hành vi phân tích nội dung Rage Bait và bắt nạt trực tuyến ở học sinh THPT. Trả lời sắc bén, dễ hiểu theo 4 mục: 1. Mức độ rủi ro, 2. Cấu trúc thao túng tâm lý, 3. Hệ lụy nếu bốc đồng, 4. Định hướng xử lý."
-                        },
-                        { role: "user", content: `Phân tích nội dung sau: "${fallbackContent}"` }
-                    ]);
-                    outputEl.innerText = cleanMarkdown(fallbackReply);
-                } catch (e) {
-                    outputEl.innerText = "⚠️ Máy chủ đang bận xử lý. Bạn hãy đợi 5 giây rồi bấm Phân Tích lại nhé!";
-                }
+                console.error("Lỗi phân tích:", err);
+                outputEl.innerText = `⚠️ Không thể kết nối máy chủ phân tích (${err.message}). Bạn hãy đợi vài giây rồi bấm Phân Tích lại nhé!`;
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<span>PHÂN TÍCH CHUYÊN SÂU TỰ ĐỘNG</span>';
             }
-        }
-
-        async function queryNotebookLM(content) {
-            const lmPrompt = `Dựa trên cơ sở dữ liệu nghiên cứu về Rage Bait (bẫy phẫn nộ) và bạo lực học đường trên không gian mạng trong sổ tay, hãy phân tích chuyên sâu nội dung sau:
-${content}
-
-Trình bày súc tích, sắc bén theo đúng 4 mục:
-1. 🚨 MỨC ĐỘ RỦI RO RAGE BAIT: (Thấp / Trung bình / Cao - kèm lý do).
-2. 🧠 CẤU TRÚC THAO TÚNG TÂM LÝ: (Chỉ rõ thủ thuật ngôn từ, cách khơi gợi sự phẫn nộ, cô lập hoặc công kích cá nhân).
-3. ⚠️ HỆ LỤY KHI PHẢN ỨNG BỐC ĐỒNG: (Rủi ro leo thang mâu thuẫn trên mạng và ngoài đời thực).
-4. 💡 ĐỊNH HƯỚNG XỬ LÝ: (Gợi ý chuyển sang tab CALM để điều hòa cảm xúc hoặc tab CONSIDER để suy ngẫm).`;
-
-            const response = await fetch(`${LM_API_BASE}/notebooks/${CORE_NOTEBOOK_ID}/chat`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": LM_API_KEY
-                },
-                body: JSON.stringify({ message: lmPrompt })
-            });
-
-            if (!response.ok) throw new Error("NotebookLM HTTP " + response.status);
-            const data = await response.json();
-            return data.answer || data.response || data.message || (data.data && data.data.answer);
         }
 
         // ==========================================
@@ -880,18 +873,9 @@ Trình bày súc tích, sắc bén theo đúng 4 mục:
         }
 
         // ==========================================
-        // TAB 3: CONSIDER (SOCRATES AI - GU API)
+        // TAB 3: CONSIDER (SOCRATES AI - TRUY VẤN 3 TẦNG)
         // ==========================================
-        const SOCRATES_PROMPT = `Bạn là người bạn đồng hành tâm lý sâu sắc, tinh tế và chân thành dành cho học sinh THPT (15-18 tuổi) theo lối trò chuyện gợi mở Socrates.
-Quy tắc bắt buộc:
-- Trò chuyện tự nhiên, gần gũi như một người bạn lớn đáng tin cậy; KHÔNG giảng đạo lý, KHÔNG lên lớp, KHÔNG nhắc đến lý thuyết học thuật hay các bước 5C.
-- Luôn lắng nghe và công nhận cảm xúc thật của bạn học sinh trước tiên.
-- Đặt 1-2 câu hỏi gợi mở nhẹ nhàng nhưng chạm đúng cốt lõi vấn đề, giúp bạn ấy tự nhận ra đâu là sự thật, đâu là cái bẫy khiêu khích và điều gì mới thực sự đáng để bận tâm.
-- Giữ câu trả lời súc tích (3-5 câu), ấm áp, xưng hô "mình - bạn".`;
-
-        let socratesHistory = [
-            { role: "system", content: SOCRATES_PROMPT }
-        ];
+        let conversationLog = [];
 
         async function sendSocratesChat() {
             const input = document.getElementById('chat-input');
@@ -904,7 +888,7 @@ Quy tắc bắt buộc:
             appendChat('user', text);
             input.value = '';
             btn.disabled = true;
-            socratesHistory.push({ role: "user", content: text });
+            conversationLog.push(`Học sinh: ${text}`);
 
             const waitId = 'wait-' + Date.now();
             const waitEl = document.createElement('div');
@@ -914,15 +898,30 @@ Quy tắc bắt buộc:
             box.appendChild(waitEl);
             box.scrollTop = box.scrollHeight;
 
+            const recentHistory = conversationLog.slice(-6).join("\n");
+            const socratesQuestion = `Bạn đang đóng vai Socrates AI — một người bạn đồng hành tâm lý sâu sắc, tinh tế và cực kỳ thấu hiểu tâm lý học sinh THPT (15-18 tuổi), vận dụng nghệ thuật đối thoại gợi mở Socrates kết hợp tri thức tâm lý học điều hòa cơn giận.
+
+NGUYÊN TẮC CỐT LÕI:
+1. KHÔNG BAO GIỜ giảng đạo lý, dạy đời, phán xét hay dùng ngôn ngữ sách giáo khoa cứng nhắc. Tuyệt đối không nhắc tên "mô hình 5C" hay các thuật ngữ lý thuyết khô khan.
+2. Cấu trúc phản hồi tự nhiên gồm 3 nhịp mượt mà (tổng độ dài khoảng 4-6 câu, xưng hô "mình - bạn"):
+   - Nhịp 1 (Chạm & Công nhận): Gọi tên chính xác cảm giác ấm ức, tổn thương hoặc bất lực mà bạn học sinh đang trải qua để bạn ấy thấy mình thực sự được thấu hiểu.
+   - Nhịp 2 (Soi chiếu góc khuất): Nhẹ nhàng chỉ ra ranh giới giữa "giá trị thật của bạn" và "sự phán xét/khiêu khích của người khác" (ví dụ: một lời công kích ẩn danh nói lên sự bất ổn của kẻ viết ra nó, chứ không định nghĩa con người bạn).
+   - Nhịp 3 (Câu hỏi khai mở): Đặt DUY NHẤT 1 câu hỏi gợi mở sắc sảo, đi thẳng vào trọng tâm để bạn ấy tự tìm ra câu trả lời cho chính mình (ví dụ: "Nếu bây giờ bạn lao vào thanh minh với một người vốn đã cố tình không muốn hiểu, điều gì sẽ xảy ra tiếp theo?" hoặc "Giữa việc chứng minh cho đám đông xa lạ thấy họ sai và việc giữ bình yên cho bản thân, lúc này điều gì đáng giá hơn với bạn?").
+
+Diễn biến cuộc trò chuyện gần nhất:
+${recentHistory}
+
+Hãy viết lời phản hồi tiếp theo của Socrates AI (không dùng ký tự ** hay gạch đầu dòng):`;
+
             try {
-                const reply = await callGuApiWithFallback(socratesHistory);
+                const reply = await askNotebookLM(socratesQuestion);
                 document.getElementById(waitId).remove();
                 const cleaned = cleanMarkdown(reply);
                 appendChat('ai', cleaned);
-                socratesHistory.push({ role: "assistant", content: cleaned });
+                conversationLog.push(`Socrates: ${cleaned}`);
             } catch (err) {
                 document.getElementById(waitId).remove();
-                appendChat('ai', 'Kết nối hơi chập chờn nên mình chưa nhận được tin nhắn, bạn gửi lại giúp mình nhé!');
+                appendChat('ai', 'Kết nối hơi chập chờn nên mình chưa nghe rõ ý bạn, bạn gửi lại giúp mình nhé!');
             } finally {
                 btn.disabled = false;
                 input.focus();
@@ -938,37 +937,8 @@ Quy tắc bắt buộc:
             box.scrollTop = box.scrollHeight;
         }
 
-        async function callGuApiWithFallback(messages) {
-            for (const model of TEXT_MODELS) {
-                try {
-                    const res = await fetch(GU_API_URL, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${GU_API_KEY}`
-                        },
-                        body: JSON.stringify({
-                            model: model,
-                            messages: messages,
-                            temperature: 0.7,
-                            max_tokens: 750
-                        })
-                    });
-
-                    if (!res.ok) continue;
-                    const data = await res.json();
-                    if (data.choices && data.choices[0] && data.choices[0].message) {
-                        return data.choices[0].message.content;
-                    }
-                } catch (e) {
-                    console.warn(`Fallback từ model ${model}:`, e);
-                }
-            }
-            throw new Error("Tất cả model đều không phản hồi.");
-        }
-
         function cleanMarkdown(str) {
-            return (str || "").replace(/\*\*/g, '').replace(/###/g, '').trim();
+            return (str || "").replace(/\*\*/g, '').replace(/###/g, '').replace(/##/g, '').trim();
         }
     </script>
 </body>
